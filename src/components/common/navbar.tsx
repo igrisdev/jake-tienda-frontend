@@ -9,7 +9,7 @@ import { IDropDownMenu } from "@/types/navbar";
 import { categoryDropdown } from "@/service/api/category";
 import { MobileMenu } from "./movil-menu-drawer";
 import { ShoppingCartDrawer } from "./shopping-cart-drawer";
-import { SearchProductsWrapper } from "./search-products-wrapper";
+import { SearchProducts } from "./search-products";
 
 export interface IRoutes {
   name: string;
@@ -56,7 +56,7 @@ export const Navbar = async () => {
         </section>
 
         <section className="grid flex-1 gap-4 md:px-5 lg:px-10 xl:px-20">
-          <SearchProductsWrapper />
+          <SearchProducts />
 
           <ul className="flex h-full text-sm lg:text-base">
             {routes.map((route) => {
@@ -109,7 +109,7 @@ export const Navbar = async () => {
         </section>
 
         <section className="px-2">
-          <SearchProductsWrapper />
+          <SearchProducts />
         </section>
       </nav>
     </>

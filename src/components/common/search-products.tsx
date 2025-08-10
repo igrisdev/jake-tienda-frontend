@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useSearchProducts } from "@/hooks/use-search-products";
 
 import { RefreshCw, Search } from "lucide-react";
+import { Suspense } from "react";
 
 export const SearchProducts = () => {
   const {
@@ -71,23 +72,27 @@ export const SearchProducts = () => {
   };
 
   return (
-    <section className="relative">
-      <div className="group">
-        <div className="relative flex w-full items-center">
-          <input
-            type="text"
-            className="w-full rounded-full border border-gray-400 px-4 py-2 focus:border-blue-50"
-            placeholder="Buscar..."
-            value={search}
-            onChange={handleChange}
-            onKeyDown={handleKeyDown}
-          />
-          <Search className="absolute right-4" />
-          {loading && <RefreshCw className="absolute right-14 animate-spin" />}
-        </div>
+    <Suspense fallback={<div className="h-[42px] w-full"></div>}>
+      <section className="relative">
+        <div className="group">
+          <div className="relative flex w-full items-center">
+            <input
+              type="text"
+              className="w-full rounded-full border border-gray-400 px-4 py-2 focus:border-blue-50"
+              placeholder="Buscar..."
+              value={search}
+              onChange={handleChange}
+              onKeyDown={handleKeyDown}
+            />
+            <Search className="absolute right-4" />
+            {loading && (
+              <RefreshCw className="absolute right-14 animate-spin" />
+            )}
+          </div>
 
-        {renderDropdown()}
-      </div>
-    </section>
+          {renderDropdown()}
+        </div>
+      </section>
+    </Suspense>
   );
 };

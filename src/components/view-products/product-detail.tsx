@@ -1,4 +1,4 @@
-import { IProductCart, IViewProduct } from "@/types/product";
+import { IProductFilter, IViewProduct } from "@/types/product";
 import ProductInfo from "./product-info";
 import ProductSimilar from "./product-similar";
 import { getViewProduct } from "@/service/api/product";
@@ -17,7 +17,7 @@ export const ProductDetail = async ({ slug }: { slug: string }) => {
     return <div>Producto no encontrado.</div>;
   }
 
-  let categoryProducts: IProductCart[] = [];
+  let categoryProducts: IProductFilter[] = [];
   if (product.category) {
     categoryProducts = await productCategory(product.category, product.id);
   }

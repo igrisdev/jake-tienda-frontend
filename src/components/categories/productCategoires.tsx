@@ -2,18 +2,15 @@
 
 import { Header } from "./header";
 import { usePagination } from "@/hooks/usePagination";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useStoreProducts } from "@/store/products";
 import { useGetParams } from "@/hooks/useGetParams";
 import { ViewProducts } from "./viewProducts";
+import { LoaderSpinner } from "../common/loaderSpinner";
 
 export const ProductCategoires = () => {
   const { currentPage, setPage } = usePagination();
   const { setAllProducts, setLoading } = useStoreProducts();
-
-  // const { params: brand, loadingParams: loadingBrand } = useGetParams({
-  //   name: "brand",
-  // });
 
   const { params: category, loadingParams: loadingcategory } = useGetParams({
     name: "category",
@@ -51,17 +48,6 @@ export const ProductCategoires = () => {
     }
   };
 
-  // useEffect(() => {
-  //   if (!brand || loadingBrand) return;
-
-  //   handleBrands({ brands: brand.split(",") });
-  //   getProductsByCategoryAndBrand({
-  //     name: "brand",
-  //     search: brand,
-  //     page: currentPage,
-  //   });
-  // }, [brand, currentPage, loadingBrand]);
-
   useEffect(() => {
     if (!category || loadingcategory) return;
 
@@ -73,16 +59,18 @@ export const ProductCategoires = () => {
   }, [category, currentPage, loadingcategory]);
 
   return (
-    <div className="grid gap-4">
-      <Header title={category} name="Categorías" />
+    <Suspense fallback={<LoaderSpinner />}>
+      <div className="grid gap-4">
+        <Header title={category} name="Categorías" />
 
-      <div className="mx-auto grid w-full max-w-7xl gap-4 p-4 px-4 py-3">
-        <ViewProducts
-          currentPage={currentPage}
-          setPage={setPage}
-          pagination={pagination}
-        />
+        <div className="mx-auto grid w-full max-w-7xl gap-4 p-4 px-4 py-3">
+          <ViewProducts
+            currentPage={currentPage}
+            setPage={setPage}
+            pagination={pagination}
+          />
+        </div>
       </div>
-    </div>
+    </Suspense>
   );
 };

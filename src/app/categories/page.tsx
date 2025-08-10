@@ -1,6 +1,4 @@
 import { ProductCategoires } from "@/components/categories/productCategoires";
-import { LoaderSpinner } from "@/components/common/loaderSpinner";
-import { Suspense } from "react";
 
 // export const metadata: Metadata = {
 //   title:
@@ -40,9 +38,5 @@ import { Suspense } from "react";
 // };
 
 export default async function Page() {
-  return (
-    <Suspense fallback={<LoaderSpinner />}>
-      <ProductCategoires />;
-    </Suspense>
-  );
+  return <ProductCategoires />;
 }

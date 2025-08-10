@@ -1,3 +1,5 @@
+import { Suspense } from "react";
+
 import Link from "next/link";
 import Image from "next/image";
 
@@ -34,7 +36,9 @@ export const Products = async () => {
         </section>
 
         <section className="h-full w-full sm:col-span-3">
-          <CarouselProducts products={carouselNewProducts} />
+          <Suspense fallback={<div className="h-72"></div>}>
+            <CarouselProducts products={carouselNewProducts} />
+          </Suspense>
         </section>
       </div>
     </section>
