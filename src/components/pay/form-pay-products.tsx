@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { useState } from "react";
 
 import Image from "next/image";
 
@@ -185,14 +185,12 @@ export const FormPayProducts = () => {
   const { products: productsCart } = cartStore;
 
   return (
-    <Suspense fallback={<div className="h-full"></div>}>
-      <div className="w-full p-4">
-        <div className="grid gap-8">
-          <BuyerInfoForm buyerInfo={buyerInfo} onChange={handleInputChange} />
-          <OrderSummary products={productsCart} totalPrice={getTotalPrice()} />
-          <SubmitButton onClick={handlePaymentSubmit} disabled={isLoading} />
-        </div>
+    <div className="w-full p-4">
+      <div className="grid gap-8">
+        <BuyerInfoForm buyerInfo={buyerInfo} onChange={handleInputChange} />
+        <OrderSummary products={productsCart} totalPrice={getTotalPrice()} />
+        <SubmitButton onClick={handlePaymentSubmit} disabled={isLoading} />
       </div>
-    </Suspense>
+    </div>
   );
 };

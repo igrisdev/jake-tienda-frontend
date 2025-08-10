@@ -9,6 +9,7 @@ import "@/styles/home/carrousel-products.css";
 
 import { IProductFilter } from "@/types/product";
 import { CartProduct } from "../common/cart-product";
+import { Suspense } from "react";
 
 export const CarouselProducts = ({
   products,
@@ -16,7 +17,7 @@ export const CarouselProducts = ({
   products: IProductFilter[];
 }) => {
   return (
-    <>
+    <Suspense fallback={<div className="h-72"></div>}>
       <Swiper
         slidesPerView={1}
         spaceBetween={4}
@@ -43,6 +44,6 @@ export const CarouselProducts = ({
           </SwiperSlide>
         ))}
       </Swiper>
-    </>
+    </Suspense>
   );
 };

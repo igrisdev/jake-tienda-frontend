@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  Suspense,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type ReactElement,
-} from "react";
+import { useEffect, useMemo, useRef, useState, type ReactElement } from "react";
 import CreditBlock from "./credit-block";
 import { User, Smartphone, XCircle, Clock, MapPin } from "lucide-react";
 import type { StaticImageData } from "next/image";
@@ -24,11 +17,11 @@ type EntidadId = "banco" | "addi" | "gora" | "brilla";
 type Entidad = {
   id: EntidadId;
   title: string;
-  image: StaticImageData; // 👈 sin "any"
+  image: StaticImageData;
   description: string;
   buttonText: string;
   buttonLink: string;
-  videoId?: string; // 👈 sólo Addi lo usará
+  videoId?: string;
 };
 
 export default function CreditSection() {
@@ -151,45 +144,41 @@ export default function CreditSection() {
   }, [entidades]); // entidades ya está memorizado
 
   return (
-    <Suspense fallback={<div className="h-full"></div>}>
-      <div className="mx-auto max-w-7xl px-6 py-12 text-black lg:px-20">
-        <h1 className="mb-20 text-center text-4xl font-bold text-black">
-          Formas de financiamiento
-        </h1>
+    <div className="mx-auto max-w-7xl px-6 py-12 text-black lg:px-20">
+      <h1 className="mb-20 text-center text-4xl font-bold text-black">
+        Formas de financiamiento
+      </h1>
 
-        <div className="grid grid-cols-1 gap-12 lg:grid-cols-3">
-          <div className="hidden lg:col-span-1 lg:block">
-            <div className="sticky top-40 ml-8">
-              <h2 className="text-3xl font-bold text-cyan-600">
-                {activeTitle}
-              </h2>
-            </div>
-          </div>
-
-          <div className="flex flex-col space-y-32 lg:col-span-2">
-            {entidades.map((entidad, idx) => (
-              <div
-                key={entidad.id}
-                data-id={entidad.id}
-                ref={(el) => {
-                  // IMPORTANTE: no retornes nada aquí
-                  sectionsRef.current[idx] = el;
-                }}
-              >
-                <CreditBlock
-                  title={entidad.title}
-                  image={entidad.image}
-                  description={entidad.description}
-                  cards={requisitos[entidad.id]}
-                  buttonText={entidad.buttonText}
-                  buttonLink={entidad.buttonLink}
-                  videoId={entidad.videoId} // 👈 video para Addi
-                />
-              </div>
-            ))}
+      <div className="grid grid-cols-1 gap-12 lg:grid-cols-3">
+        <div className="hidden lg:col-span-1 lg:block">
+          <div className="sticky top-40 ml-8">
+            <h2 className="text-3xl font-bold text-cyan-600">{activeTitle}</h2>
           </div>
         </div>
+
+        <div className="flex flex-col space-y-32 lg:col-span-2">
+          {entidades.map((entidad, idx) => (
+            <div
+              key={entidad.id}
+              data-id={entidad.id}
+              ref={(el) => {
+                // IMPORTANTE: no retornes nada aquí
+                sectionsRef.current[idx] = el;
+              }}
+            >
+              <CreditBlock
+                title={entidad.title}
+                image={entidad.image}
+                description={entidad.description}
+                cards={requisitos[entidad.id]}
+                buttonText={entidad.buttonText}
+                buttonLink={entidad.buttonLink}
+                videoId={entidad.videoId} // 👈 video para Addi
+              />
+            </div>
+          ))}
+        </div>
       </div>
-    </Suspense>
+    </div>
   );
 }
