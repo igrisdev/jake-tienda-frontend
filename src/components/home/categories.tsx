@@ -16,7 +16,7 @@ export const Categories = async () => {
       </div>
 
       <div className="grid grid-cols-2 gap-4 py-4 md:grid-cols-3 lg:grid-cols-5">
-        {categories.slice(0, 8).map((category) => (
+        {categories.slice(0, 20).map((category) => (
           <CardCategory key={category.id} category={category} />
         ))}
       </div>

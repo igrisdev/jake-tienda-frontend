@@ -460,6 +460,7 @@ export async function getCart(
   const res = await shopifyFetch<ShopifyCartOperation>({
     query: getCartQuery,
     variables: { cartId },
+    cache: "force-cache",
     tags: [TAGS.cart],
   });
 
@@ -560,8 +561,9 @@ export async function revalidate(req: NextRequest): Promise<NextResponse> {
 export async function getPage(handle: string): Promise<Page> {
   const res = await shopifyFetch<ShopifyPageOperation>({
     query: getPageQuery,
-    cache: "no-store",
+    cache: "force-cache",
     variables: { handle },
+    tags: [TAGS.collections],
   });
 
   return res.body.data.pageByHandle;
@@ -570,7 +572,8 @@ export async function getPage(handle: string): Promise<Page> {
 export async function getPages(): Promise<Page[]> {
   const res = await shopifyFetch<ShopifyPagesOperation>({
     query: getPagesQuery,
-    cache: "no-store",
+    cache: "force-cache",
+    tags: [TAGS.collections],
   });
 
   return removeEdgesAndNodes(res.body.data.pages);

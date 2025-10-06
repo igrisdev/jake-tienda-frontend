@@ -25,11 +25,14 @@ export default function CartModal() {
   const { cart, updateCartItem } = useCart();
   const [isOpen, setIsOpen] = useState(false);
   const quantityRef = useRef(cart?.totalQuantity);
+  const cartCreationAttempted = useRef(false);
   const openCart = () => setIsOpen(true);
   const closeCart = () => setIsOpen(false);
 
   useEffect(() => {
-    if (!cart) {
+    // Solo crear carrito una vez si no existe y no se ha intentado crear antes
+    if (!cart && !cartCreationAttempted.current) {
+      cartCreationAttempted.current = true;
       createCartAndSetCookie();
     }
   }, [cart]);
