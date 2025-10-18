@@ -85,15 +85,6 @@ export const ProductInfo = ({ product }: { product: Product }) => {
 
       {/* === BLOQUE 2: Pago directo === */}
       <div className="flex flex-col gap-3 rounded border border-gray-300 p-4">
-        <p className="text-2xl font-semibold text-gray-800">
-          {directDiscountTotal.toLocaleString("es-CO", {
-            style: "currency",
-            currency,
-          })}
-        </p>
-        <p className="text-sm text-green-700">
-          Descuento del 4% en pago directo
-        </p>
         <p className="text-sm text-gray-600">
           Transferencia bancaria <span>(Nequi, Daviplata, etc)</span>
         </p>
