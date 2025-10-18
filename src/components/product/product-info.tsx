@@ -7,6 +7,7 @@ import { Landmark, MessageCircle, Info, X } from "lucide-react";
 import { Product } from "@/lib/shopify/types";
 import Price from "../price";
 import { AddToCart } from "../cart/add-to-cart";
+import bancoBogotaImg from '@/assets/logo/banco-de-bogota.png';
 
 const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WA_NUMBER || "573103876150";
 const BANCO_BOGOTA_URL =
@@ -48,9 +49,13 @@ export const ProductInfo = ({ product }: { product: Product }) => {
     )}.`,
   )}`;
 
-  const addiWhatsAppHref = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
-    `Hola, quiero financiar mi compra del producto "${product.title}" con Addi.`,
-  )}`;
+ const addiWhatsAppHref = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+  `Hola, quiero financiar mi compra del producto "${product.title}" con Addi. El valor total del producto con el incremento del 5% es ${(
+    baseAmount * 1.05
+  ).toLocaleString("es-CO", { style: "currency", currency })}.`
+)}`;
+
+
 
   // Cerrar modal con ESC
   useEffect(() => {
@@ -85,8 +90,9 @@ export const ProductInfo = ({ product }: { product: Product }) => {
 
       {/* === BLOQUE 2: Pago directo === */}
       <div className="flex flex-col gap-3 rounded border border-gray-300 p-4">
+        <p className="text-2xl font-semibold text-gray-800">descuento del 4%</p>
         <p className="text-sm text-gray-600">
-          Transferencia bancaria <span>(Nequi, Daviplata, etc)</span>
+          Transferencia bancaria <span>(transferencia de Bancolombia, Nequi, Daviplata, etc)</span>
         </p>
         <button
           onClick={() => setShowDirectModal(true)}
@@ -233,12 +239,13 @@ export const ProductInfo = ({ product }: { product: Product }) => {
               <li>
                 Ser mayor de edad y tener documento de identidad colombiano.
               </li>
-              <li>Contar con ingresos estables y comprobables.</li>
+               <li>Celular activo y un correo electrónico válido.</li>
               <li>No tener reportes negativos en centrales de riesgo.</li>
-              <li>Presentar extractos bancarios o desprendibles de pago.</li>
               <li>
                 Contar con una cuenta activa en el Banco de Bogotá o estar
                 dispuesto a abrir una.
+              </li> <li>
+               Tener el valor total del financiamiento
               </li>
             </ol>
 
@@ -256,88 +263,112 @@ export const ProductInfo = ({ product }: { product: Product }) => {
         </div>
       )}
 
-      {/* ===== MODAL PAGO DIRECTO ===== */}
-      {showDirectModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <button
-            aria-label="Cerrar"
-            className="absolute inset-0 bg-black/50"
-            onClick={() => {
-              setShowDirectModal(false);
-              setConfirmDirect(false);
-            }}
-          />
-          <div className="relative z-10 w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
+     {/* ===== MODAL PAGO DIRECTO ===== */}
+{showDirectModal && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <button
+      aria-label="Cerrar"
+      className="absolute inset-0 bg-black/50"
+      onClick={() => {
+        setShowDirectModal(false);
+        setConfirmDirect(false);
+      }}
+    />
+    <div className="relative z-10 w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
+      <button
+        onClick={() => {
+          setShowDirectModal(false);
+          setConfirmDirect(false);
+        }}
+        className="absolute top-3 right-3 rounded p-1 text-gray-500 hover:bg-gray-100"
+        aria-label="Cerrar"
+      >
+        <X size={20} />
+      </button>
+
+      {!confirmDirect ? (
+        <>
+          <h2 className="mb-4 text-xl font-bold text-gray-900">
+            Pago directo con descuento
+          </h2>
+          <p className="mb-3 text-gray-700">
+            Al realizar tu pago mediante{" "}
+            <strong>transferencia bancaria (Nequi, Daviplata, etc.)</strong>{" "}
+            obtienes un <strong>descuento exclusivo del 4%</strong> sobre el valor total del producto.
+          </p>
+          <p className="text-lg font-semibold text-green-700">
+            Total con descuento:{" "}
+            {directDiscountTotal.toLocaleString("es-CO", {
+              style: "currency",
+              currency,
+            })}
+          </p>
+
+          <div className="mt-4 mb-3 border-t pt-3 text-gray-700">
+            <p>
+              Antes de continuar, asegúrate de que ya:
+            </p>
+            <ul className="mt-2 list-disc pl-5 space-y-1 text-sm">
+              <li>Leíste las <strong>especificaciones del producto</strong>.</li>
+              <li>Revisaste el <strong>precio final</strong> y el descuento aplicado.</li>
+              <li>Estás <strong>100% seguro</strong> de realizar la compra.</li>
+            </ul>
+          </div>
+
+          <p className="mt-2 text-sm text-gray-600">
+            Este canal de WhatsApp es <strong>solo para pagos confirmados</strong>. Si aún tienes dudas o preguntas, revisa la información del producto antes de continuar.
+          </p>
+
+          <div className="mt-5 flex flex-col gap-2 sm:flex-row">
+            <button
+              onClick={() => setConfirmDirect(true)}
+              className="flex-1 rounded-lg bg-green-600 px-4 py-2 text-white hover:bg-green-700"
+            >
+              Sí, ya verifiqué todo y quiero comprar
+            </button>
             <button
               onClick={() => {
                 setShowDirectModal(false);
                 setConfirmDirect(false);
               }}
-              className="absolute top-3 right-3 rounded p-1 text-gray-500 hover:bg-gray-100"
-              aria-label="Cerrar"
+              className="flex-1 rounded-lg border border-gray-400 px-4 py-2 text-gray-700 hover:bg-gray-50"
             >
-              <X size={20} />
+              Cancelar
             </button>
-
-            {!confirmDirect ? (
-              <>
-                <h2 className="mb-4 text-xl font-bold text-gray-900">
-                  Pago directo con descuento del 4%
-                </h2>
-                <p className="mb-3 text-gray-700">
-                  Al pagar directamente por{" "}
-                  <strong>transferencia bancaria</strong> obtienes un descuento
-                  del <strong>4%</strong>.
-                </p>
-                <p className="text-lg font-semibold text-green-700">
-                  Total con descuento:{" "}
-                  {directDiscountTotal.toLocaleString("es-CO", {
-                    style: "currency",
-                    currency,
-                  })}
-                </p>
-
-                <div className="mt-5 flex flex-col gap-2 sm:flex-row">
-                  <button
-                    onClick={() => setConfirmDirect(true)}
-                    className="flex-1 rounded-lg bg-green-600 px-4 py-2 text-white hover:bg-green-700"
-                  >
-                    Sí, deseo continuar
-                  </button>
-                  <button
-                    onClick={() => {
-                      setShowDirectModal(false);
-                      setConfirmDirect(false);
-                    }}
-                    className="flex-1 rounded-lg border border-gray-400 px-4 py-2 text-gray-700 hover:bg-gray-50"
-                  >
-                    Cancelar
-                  </button>
-                </div>
-              </>
-            ) : (
-              <>
-                <h2 className="mb-4 text-xl font-bold text-gray-900">
-                  Confirmar pago directo
-                </h2>
-                <p className="mb-4 text-gray-700">
-                  Serás redirigido a nuestro WhatsApp para coordinar el pago con
-                  un asesor.
-                </p>
-                <Link
-                  href={directWhatsAppHref}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex w-full items-center justify-center rounded-lg bg-green-600 px-4 py-2 text-white hover:bg-green-700"
-                >
-                  <MessageCircle size={20} className="mr-2" />
-                  Continuar a WhatsApp
-                </Link>
-              </>
-            )}
           </div>
-        </div>
+        </>
+      ) : (
+        <>
+          <h2 className="mb-4 text-xl font-bold text-gray-900">
+            Confirmar pago directo
+          </h2>
+          <p className="mb-4 text-gray-700">
+            Serás redirigido a nuestro canal de WhatsApp para coordinar el pago
+            con un asesor. Este paso es exclusivo para personas que{" "}
+            <strong>ya revisaron toda la información</strong> y{" "}
+            <strong>desean concretar su compra.</strong>
+          </p>
+
+          <Link
+            href={directWhatsAppHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex w-full items-center justify-center rounded-lg bg-green-600 px-4 py-2 text-white hover:bg-green-700"
+          >
+            <MessageCircle size={20} className="mr-2" />
+            Continuar a WhatsApp
+          </Link>
+
+          <p className="mt-3 text-center text-xs text-gray-500">
+            Recuerda: este chat es solo para pagos confirmados. Si aún tienes
+            dudas, por favor revisa la descripción del producto antes de escribir.
+          </p>
+        </>
       )}
+    </div>
+  </div>
+)}
+
     </div>
   );
 };
