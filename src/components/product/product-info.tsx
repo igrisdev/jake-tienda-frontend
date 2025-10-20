@@ -20,11 +20,14 @@ const ADDI_PREAPPROVAL_URL =
 const ADDI_RATE = 0.05; // +5%
 const DIRECT_DISCOUNT = 0.04; // -4%
 
+
+
 export const ProductInfo = ({ product }: { product: Product }) => {
   const [showAddiModal, setShowAddiModal] = useState(false);
   const [showDirectModal, setShowDirectModal] = useState(false);
   const [showBancoModal, setShowBancoModal] = useState(false);
   const [confirmDirect, setConfirmDirect] = useState(false);
+  const [showAddiVideoModal, setShowAddiVideoModal] = useState(false);
 
   const baseAmount = useMemo(
     () => parseFloat(product.priceRange.maxVariantPrice.amount),
@@ -153,60 +156,148 @@ export const ProductInfo = ({ product }: { product: Product }) => {
         </p>
       </div>
 
-      {/* ===== MODAL ADDI ===== */}
-      {showAddiModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <button
-            aria-label="Cerrar"
-            className="absolute inset-0 bg-black/50"
-            onClick={() => setShowAddiModal(false)}
-          />
-          <div className="animate-fadeIn relative z-10 w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
-            <button
-              onClick={() => setShowAddiModal(false)}
-              className="absolute top-3 right-3 rounded p-1 text-gray-500 hover:bg-gray-100"
-              aria-label="Cerrar"
-            >
-              <X size={20} />
-            </button>
+    {/* === MODAL ADDI === */}
+{showAddiModal && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    {/* Fondo oscuro */}
+    <button
+      aria-label="Cerrar"
+      className="absolute inset-0 bg-black/50"
+      onClick={() => setShowAddiModal(false)}
+    />
+    {/* Contenedor principal */}
+    <div className="animate-fadeIn relative z-10 w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
+      {/* Botón cerrar */}
+      <button
+        onClick={() => setShowAddiModal(false)}
+        className="absolute top-3 right-3 rounded p-1 text-gray-500 hover:bg-gray-100"
+        aria-label="Cerrar"
+      >
+        <X size={20} />
+      </button>
 
-            <div className="mb-6 text-center">
-              <h2 className="text-2xl font-bold text-gray-800">
-                Financia tu compra con Addi
-              </h2>
-              <p className="mt-2 text-sm text-gray-600">
-                Para poder aplicar, asegúrate de cumplir con los siguientes
-                requisitos:
-              </p>
-            </div>
+      {/* Contenido */}
+      <div className="mb-6 text-center">
+        <h2 className="text-2xl font-bold text-gray-800">
+          Financia tu compra con Addi
+        </h2>
+        <p className="mt-2 text-sm text-gray-600">
+          Para poder aplicar, asegúrate de cumplir con los siguientes requisitos:
+        </p>
+      </div>
 
-            <ol className="mb-6 list-inside list-decimal space-y-3 text-gray-700">
-              <li>
-                Ser mayor de edad y tener documento de identidad colombiano.
-              </li>
-              <li>
-                Tener un celular con acceso a WhatsApp para la verificación.
-              </li>
-              <li>Tener direccion de correo electrónico válida.</li>
-              <li>
-                La compra debe tener un valor minimo de $50.000 pesos
-                colombianos.
-              </li>
-            </ol>
+      <ol className="mb-6 list-inside list-decimal space-y-3 text-gray-700">
+        <li>Ser mayor de edad y tener documento de identidad colombiano.</li>
+        <li>Tener un celular con acceso a WhatsApp para la verificación.</li>
+        <li>Tener dirección de correo electrónico válida.</li>
+        <li>La compra debe tener un valor mínimo de $50.000 pesos colombianos.</li>
+      </ol>
 
-            <button
-              onClick={() => (window.location.href = addiWhatsAppHref)}
-              className="w-full rounded-xl bg-yellow-400 px-6 py-3 font-semibold text-black transition-all hover:bg-yellow-500"
-            >
-              Entendí la información y deseo continuar
-            </button>
+      {/* Botón para abrir video */}
+      <div className="mb-6 text-center">
+        <p className="text-sm text-gray-600 mb-2">
+          Mira este breve video para conocer cómo crear tu crédito con Addi:
+        </p>
+        <button
+          onClick={() => {
+            setShowAddiModal(false); // 🔸 Cierra el modal Addi
+            setTimeout(() => setShowAddiVideoModal(true), 300); // 🔸 Abre el video
+          }}
+          className="rounded-xl bg-gray-200 px-4 py-2 text-sm font-medium text-gray-800 hover:bg-gray-300"
+        >
+          Ver video explicativo
+        </button>
+      </div>
 
-            <p className="mt-3 text-center text-xs text-gray-500">
-              Serás redirigido a WhatsApp para hablar con un asesor de Addi.
-            </p>
-          </div>
-        </div>
-      )}
+      {/* Botón continuar */}
+      <button
+        onClick={() => (window.location.href = addiWhatsAppHref)} // ✅ SOLO redirige a WhatsApp
+        className="w-full rounded-xl bg-yellow-400 px-6 py-3 font-semibold text-black transition-all hover:bg-yellow-500"
+      >
+        Entendí la información y deseo continuar
+      </button>
+
+      <p className="mt-3 text-center text-xs text-gray-500">
+        Serás redirigido a WhatsApp para hablar con un asesor de Addi.
+      </p>
+    </div>
+  </div>
+)}
+
+{/* === MODAL DEL VIDEO === */}
+{showAddiVideoModal && (
+  <div className="fixed inset-0 z-[9999] flex items-center justify-center p-3">
+    {/* Fondo oscuro */}
+    <button
+      aria-label="Cerrar video"
+      className="absolute inset-0 bg-black/60"
+      onClick={() => setShowAddiVideoModal(false)}
+    />
+    {/* Contenedor del video */}
+    <div className="relative z-10 w-full max-w-lg rounded-2xl bg-white p-4 shadow-xl">
+      <button
+        onClick={() => setShowAddiVideoModal(false)}
+        className="absolute top-2 right-2 rounded-full bg-gray-100 p-2 text-gray-600 hover:bg-gray-200"
+        aria-label="Cerrar"
+      >
+        <X size={20} />
+      </button>
+
+      <video
+        src="/movies/addi.mp4"
+        controls
+        className="w-full rounded-lg border border-gray-300 shadow-sm max-h-[70vh] object-contain"
+      >
+        Tu navegador no soporta el video.
+      </video>
+
+      <p className="mt-3 text-xs text-center text-gray-500">
+        Guía oficial de Addi sobre cómo crear y usar tu crédito.
+      </p>
+    </div>
+  </div>
+)}
+
+{/* ===== MODAL VIDEO ADDI (modal independiente, compacto) ===== */}
+{showAddiVideoModal && (
+ <div className="fixed inset-0 z-[9999] flex items-center justify-center p-3">
+
+    {/* fondo */}
+    <button
+      aria-label="Cerrar video"
+      className="absolute inset-0 bg-black/60"
+      onClick={() => setShowAddiVideoModal(false)}
+    />
+
+    <div className="relative z-70 w-full max-w-xl max-h-[90vh] overflow-hidden rounded-2xl bg-black p-3">
+      {/* Cerrar visible siempre */}
+      <button
+        onClick={() => setShowAddiVideoModal(false)}
+        className="absolute right-3 top-3 z-20 rounded-full bg-white/90 p-2 text-gray-700 hover:bg-white"
+        aria-label="Cerrar"
+      >
+        <X size={18} />
+      </button>
+
+      <div className="flex h-full w-full flex-col items-center justify-center">
+        <video
+          src="/movies/addi.mp4"
+          controls
+          autoPlay
+          playsInline
+          className="w-full max-h-[80vh] rounded-md object-contain"
+        >
+          Tu navegador no soporta el video.
+        </video>
+
+        <p className="mt-2 text-center text-xs text-white/80">
+          Si no se reproduce, cierra y vuelve a abrir el video.
+        </p>
+      </div>
+    </div>
+  </div>
+)}
+
 
       {/* ===== MODAL BANCO DE BOGOTÁ ===== */}
       {showBancoModal && (
@@ -241,10 +332,7 @@ export const ProductInfo = ({ product }: { product: Product }) => {
               </li>
                <li>Celular activo y un correo electrónico válido.</li>
               <li>No tener reportes negativos en centrales de riesgo.</li>
-              <li>
-                Contar con una cuenta activa en el Banco de Bogotá o estar
-                dispuesto a abrir una.
-              </li> <li>
+               <li>
                Tener el valor total del financiamiento
               </li>
             </ol>
@@ -289,13 +377,9 @@ export const ProductInfo = ({ product }: { product: Product }) => {
       {!confirmDirect ? (
         <>
           <h2 className="mb-4 text-xl font-bold text-gray-900">
-            Pago directo con descuento
+            Pago directo mediante transferencia con descuento
           </h2>
-          <p className="mb-3 text-gray-700">
-            Al realizar tu pago mediante{" "}
-            <strong>transferencia bancaria (Nequi, Daviplata, etc.)</strong>{" "}
-            obtienes un <strong>descuento exclusivo del 4%</strong> sobre el valor total del producto.
-          </p>
+          
           <p className="text-lg font-semibold text-green-700">
             Total con descuento:{" "}
             {directDiscountTotal.toLocaleString("es-CO", {
@@ -343,7 +427,7 @@ export const ProductInfo = ({ product }: { product: Product }) => {
             Confirmar pago directo
           </h2>
           <p className="mb-4 text-gray-700">
-            Serás redirigido a nuestro canal de WhatsApp para coordinar el pago
+            Serás redirigido al WhatsApp para coordinar el pago
             con un asesor. Este paso es exclusivo para personas que{" "}
             <strong>ya revisaron toda la información</strong> y{" "}
             <strong>desean concretar su compra.</strong>
@@ -358,11 +442,7 @@ export const ProductInfo = ({ product }: { product: Product }) => {
             <MessageCircle size={20} className="mr-2" />
             Continuar a WhatsApp
           </Link>
-
-          <p className="mt-3 text-center text-xs text-gray-500">
-            Recuerda: este chat es solo para pagos confirmados. Si aún tienes
-            dudas, por favor revisa la descripción del producto antes de escribir.
-          </p>
+         
         </>
       )}
     </div>
