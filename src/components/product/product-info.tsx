@@ -7,7 +7,7 @@ import { Landmark, MessageCircle, Info, X } from "lucide-react";
 import { Product } from "@/lib/shopify/types";
 import Price from "../price";
 import { AddToCart } from "../cart/add-to-cart";
-import bancoBogotaImg from '@/assets/logo/banco-de-bogota.png';
+
 
 const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WA_NUMBER || "573103876150";
 const BANCO_BOGOTA_URL =
@@ -27,7 +27,7 @@ export const ProductInfo = ({ product }: { product: Product }) => {
   const [showDirectModal, setShowDirectModal] = useState(false);
   const [showBancoModal, setShowBancoModal] = useState(false);
   const [confirmDirect, setConfirmDirect] = useState(false);
-  const [showAddiVideoModal, setShowAddiVideoModal] = useState(false);
+  const [showBancoVideoModal, setShowBancoVideoModal] = useState(false);
 
   const baseAmount = useMemo(
     () => parseFloat(product.priceRange.maxVariantPrice.amount),
@@ -193,21 +193,7 @@ export const ProductInfo = ({ product }: { product: Product }) => {
         <li>La compra debe tener un valor mínimo de $50.000 pesos colombianos.</li>
       </ol>
 
-      {/* Botón para abrir video */}
-      <div className="mb-6 text-center">
-        <p className="text-sm text-gray-600 mb-2">
-          Mira este breve video para conocer cómo crear tu crédito con Addi:
-        </p>
-        <button
-          onClick={() => {
-            setShowAddiModal(false); // 🔸 Cierra el modal Addi
-            setTimeout(() => setShowAddiVideoModal(true), 300); // 🔸 Abre el video
-          }}
-          className="rounded-xl bg-gray-200 px-4 py-2 text-sm font-medium text-gray-800 hover:bg-gray-300"
-        >
-          Ver video explicativo
-        </button>
-      </div>
+      
 
       {/* Botón continuar */}
       <button
@@ -224,55 +210,91 @@ export const ProductInfo = ({ product }: { product: Product }) => {
   </div>
 )}
 
-{/* === MODAL DEL VIDEO === */}
-{showAddiVideoModal && (
-  <div className="fixed inset-0 z-[9999] flex items-center justify-center p-3">
+
+{/* ===== MODAL BANCO DE BOGOTÁ ===== */}
+{showBancoModal && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
     {/* Fondo oscuro */}
     <button
-      aria-label="Cerrar video"
-      className="absolute inset-0 bg-black/60"
-      onClick={() => setShowAddiVideoModal(false)}
+      aria-label="Cerrar"
+      className="absolute inset-0 bg-black/50"
+      onClick={() => setShowBancoModal(false)}
     />
-    {/* Contenedor del video */}
-    <div className="relative z-10 w-full max-w-lg rounded-2xl bg-white p-4 shadow-xl">
+
+    {/* Contenedor del modal */}
+    <div className="animate-fadeIn relative z-10 w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
+      {/* Botón cerrar */}
       <button
-        onClick={() => setShowAddiVideoModal(false)}
-        className="absolute top-2 right-2 rounded-full bg-gray-100 p-2 text-gray-600 hover:bg-gray-200"
+        onClick={() => setShowBancoModal(false)}
+        className="absolute top-3 right-3 rounded p-1 text-gray-500 hover:bg-gray-100"
         aria-label="Cerrar"
       >
         <X size={20} />
       </button>
 
-      <video
-        src="/movies/addi.mp4"
-        controls
-        className="w-full rounded-lg border border-gray-300 shadow-sm max-h-[70vh] object-contain"
-      >
-        Tu navegador no soporta el video.
-      </video>
+      <div className="mb-5 text-center">
+        <Landmark size={36} className="mx-auto mb-2 text-blue-600" />
+        <h2 className="text-2xl font-bold text-gray-800">
+          Crédito Banco de Bogotá
+        </h2>
+        <p className="mt-2 text-sm text-gray-600">
+          Conoce los requisitos para acceder al crédito:
+        </p>
+      </div>
 
-      <p className="mt-3 text-xs text-center text-gray-500">
-        Guía oficial de Addi sobre cómo crear y usar tu crédito.
+      <ol className="mb-6 list-inside list-decimal space-y-3 text-gray-700">
+        <li>Ser mayor de edad y tener documento de identidad colombiano.</li>
+        <li>Tener celular activo y un correo electrónico válido.</li>
+        <li>No tener reportes negativos en centrales de riesgo.</li>
+        <li>Tener el valor total del financiamiento disponible.</li>
+      </ol>
+
+      {/* Botón para abrir video */}
+      <div className="mb-6 text-center">
+        <p className="text-sm text-gray-600 mb-2">
+          Mira este breve video para conocer cómo crear tu crédito con el Banco de Bogotá:
+        </p>
+        <button
+          onClick={() => {
+            setShowBancoModal(false); // Cierra el modal del banco
+            setTimeout(() => setShowBancoVideoModal(true), 300); // Abre el video
+          }}
+          className="rounded-xl bg-gray-200 px-4 py-2 text-sm font-medium text-gray-800 hover:bg-gray-300"
+        >
+          Ver video explicativo
+        </button>
+      </div>
+
+      {/* Botón continuar */}
+      <button
+        onClick={() => (window.location.href = BANCO_BOGOTA_URL)}
+        className="w-full rounded-xl bg-blue-600 px-6 py-3 font-semibold text-white transition-all hover:bg-blue-700"
+      >
+        Entendí la información y deseo continuar
+      </button>
+
+      <p className="mt-3 text-center text-xs text-gray-500">
+        Serás redirigido al portal oficial del Banco de Bogotá.
       </p>
     </div>
   </div>
 )}
 
-{/* ===== MODAL VIDEO ADDI (modal independiente, compacto) ===== */}
-{showAddiVideoModal && (
- <div className="fixed inset-0 z-[9999] flex items-center justify-center p-3">
-
-    {/* fondo */}
+{/* ===== MODAL VIDEO BANCO DE BOGOTÁ ===== */}
+{showBancoVideoModal && (
+  <div className="fixed inset-0 z-[9999] flex items-center justify-center p-3">
+    {/* Fondo oscuro */}
     <button
       aria-label="Cerrar video"
       className="absolute inset-0 bg-black/60"
-      onClick={() => setShowAddiVideoModal(false)}
+      onClick={() => setShowBancoVideoModal(false)}
     />
 
-    <div className="relative z-70 w-full max-w-xl max-h-[90vh] overflow-hidden rounded-2xl bg-black p-3">
-      {/* Cerrar visible siempre */}
+    {/* Contenedor del video */}
+    <div className="relative z-10 w-full max-w-xl max-h-[90vh] overflow-hidden rounded-2xl bg-black p-3">
+      {/* Botón cerrar */}
       <button
-        onClick={() => setShowAddiVideoModal(false)}
+        onClick={() => setShowBancoVideoModal(false)}
         className="absolute right-3 top-3 z-20 rounded-full bg-white/90 p-2 text-gray-700 hover:bg-white"
         aria-label="Cerrar"
       >
@@ -281,7 +303,7 @@ export const ProductInfo = ({ product }: { product: Product }) => {
 
       <div className="flex h-full w-full flex-col items-center justify-center">
         <video
-          src="/movies/addi.mp4"
+          src="/movies/BancoBogota.mp4"
           controls
           autoPlay
           playsInline
@@ -299,57 +321,6 @@ export const ProductInfo = ({ product }: { product: Product }) => {
 )}
 
 
-      {/* ===== MODAL BANCO DE BOGOTÁ ===== */}
-      {showBancoModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <button
-            aria-label="Cerrar"
-            className="absolute inset-0 bg-black/50"
-            onClick={() => setShowBancoModal(false)}
-          />
-          <div className="animate-fadeIn relative z-10 w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
-            <button
-              onClick={() => setShowBancoModal(false)}
-              className="absolute top-3 right-3 rounded p-1 text-gray-500 hover:bg-gray-100"
-              aria-label="Cerrar"
-            >
-              <X size={20} />
-            </button>
-
-            <div className="mb-5 text-center">
-              <Landmark size={36} className="mx-auto mb-2 text-blue-600" />
-              <h2 className="text-2xl font-bold text-gray-800">
-                Crédito Banco de Bogotá
-              </h2>
-              <p className="mt-2 text-sm text-gray-600">
-                Conoce los requisitos para acceder al crédito:
-              </p>
-            </div>
-
-            <ol className="mb-6 list-inside list-decimal space-y-3 text-gray-700">
-              <li>
-                Ser mayor de edad y tener documento de identidad colombiano.
-              </li>
-               <li>Celular activo y un correo electrónico válido.</li>
-              <li>No tener reportes negativos en centrales de riesgo.</li>
-               <li>
-               Tener el valor total del financiamiento
-              </li>
-            </ol>
-
-            <button
-              onClick={() => (window.location.href = BANCO_BOGOTA_URL)}
-              className="w-full rounded-xl bg-blue-600 px-6 py-3 font-semibold text-white transition-all hover:bg-blue-700"
-            >
-              Entendí la información y deseo continuar
-            </button>
-
-            <p className="mt-3 text-center text-xs text-gray-500">
-              Serás redirigido al portal oficial del Banco de Bogotá.
-            </p>
-          </div>
-        </div>
-      )}
 
      {/* ===== MODAL PAGO DIRECTO ===== */}
 {showDirectModal && (
