@@ -1,13 +1,9 @@
 import { Pagination } from "@/components/common/pagination";
 import Grid from "@/components/grid";
 import ProductGridItems from "@/components/layout/product-grid-items";
-import { defaultSort, sorting } from "@/lib/constants";
 import { getProducts } from "@/lib/shopify";
-
-export const metadata = {
-  title: "Buscar",
-  description: "Buscar productos en la tienda.",
-};
+import { sorting, defaultSort } from "@/lib/constants";
+import FiltersUpdater from "@/components/layout/search/filters-updater";
 
 export default async function SearchPage({
   searchParams,
@@ -18,6 +14,11 @@ export default async function SearchPage({
 
   const sort = (sp?.sort as string) ?? "";
   const searchValue = (sp?.q as string) ?? "";
+  const brands = (sp?.brands as string) ?? "";
+  const category = (sp?.category as string) ?? "";
+  const priceMin = sp?.price_min ? Number(sp.price_min) : undefined;
+  const priceMax = sp?.price_max ? Number(sp.price_max) : undefined;
+
   const after = sp?.after as string | undefined;
   const before = sp?.before as string | undefined;
   const page: number = sp?.page ? Number(sp.page) : 1;
@@ -25,7 +26,7 @@ export default async function SearchPage({
   const { sortKey, reverse } =
     sorting.find((item) => item.slug === sort) || defaultSort;
 
-  const { products, pageInfo } = await getProducts({
+  const { products, pageInfo, filters } = await getProducts({
     sortKey,
     reverse,
     query: searchValue,
@@ -33,34 +34,27 @@ export default async function SearchPage({
     last: before ? 18 : undefined,
     after,
     before,
+    brands,
+    category,
+    priceMin,
+    priceMax,
   });
 
-  const resultsText = products.length > 1 ? "resultados" : "resultado";
-  const currentPage: number = parseInt(String(page || "1"), 10);
-
   return (
-    <>
-      {searchValue ? (
-        <p className="mb-4">
-          {products.length === 0
-            ? "No hay productos que coincidan "
-            : `Mostrando ${products.length} ${resultsText} para `}
-          <span>&quot;{searchValue}&quot;</span>
-        </p>
-      ) : null}
-      {products.length > 0 ? (
-        <>
-          <Grid className="grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-            <ProductGridItems products={products} />
-          </Grid>
-          <Pagination
-            pageInfo={pageInfo}
-            currentPage={currentPage}
-            searchValue={searchValue}
-            sort={sort}
-          />
-        </>
-      ) : null}
-    </>
+    <div className="flex gap-6">
+      <FiltersUpdater filters={filters} />
+
+      <div className="flex-1">
+        <Grid className="grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+          <ProductGridItems products={products} />
+        </Grid>
+        <Pagination
+          pageInfo={pageInfo}
+          currentPage={page}
+          searchValue={searchValue}
+          sort={sort}
+        />
+      </div>
+    </div>
   );
 }

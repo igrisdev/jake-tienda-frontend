@@ -5,7 +5,7 @@ import {
   TAGS,
 } from "../constants";
 import { isShopifyError } from "../type-guards";
-import { ensureStartWith } from "../utils";
+import { defaultFilters, ensureStartWith, extractFilters } from "../utils";
 import {
   addToCartMutation,
   createCartMutation,
@@ -56,6 +56,7 @@ import { getPromoBannerQuery } from "./queries/bond";
 import { getHeroItemsQuery } from "./queries/hero";
 import { getBestProductPosterQuery } from "./queries/best-product";
 import { ICategoryCart } from "@/types/category";
+import { console } from "inspector";
 
 const domain = process.env.SHOPIFY_STORE_DOMAIN
   ? ensureStartWith(process.env.SHOPIFY_STORE_DOMAIN, "https://")
@@ -686,8 +687,8 @@ export async function searchProducts({
 }: {
   query?: string;
   first?: number;
-}): Promise<Product[]> {
-  if (!query) return [];
+}): Promise<{ products: Product[]; filters: any }> {
+  if (!query) return { products: [], filters: defaultFilters() };
 
   const res = await shopifyFetch<any>({
     query: getProductsQuery,
@@ -698,12 +699,20 @@ export async function searchProducts({
     },
   });
 
-  return reshapeProducts(removeEdgesAndNodes(res.body.data?.products));
+  const products = res.body.data?.products;
+
+  const filters = extractFilters(products?.edges || []);
+
+  return {
+    products: reshapeProducts(removeEdgesAndNodes(res.body.data?.products)),
+    filters,
+  };
 }
 
 // ============================================
 // OPTIMIZACIÓN CRÍTICA: getProducts sin doble fetch
 // ============================================
+
 export async function getProducts({
   query,
   reverse,
@@ -712,6 +721,10 @@ export async function getProducts({
   after,
   before,
   last,
+  brands,
+  category,
+  priceMin,
+  priceMax,
 }: {
   query?: string;
   reverse?: boolean;
@@ -720,13 +733,30 @@ export async function getProducts({
   after?: string;
   before?: string;
   last?: number;
+  brands?: string;
+  category?: string;
+  priceMin?: number;
+  priceMax?: number;
 }) {
+  const conditions: string[] = [];
+
+  if (query)
+    conditions.push(`title:*${query}* OR tag:${query} OR vendor:${query}`);
+  if (brands) conditions.push(`tag:${brands}`);
+  if (category) conditions.push(`product_type:${category}`);
+  if (priceMin !== undefined && priceMax !== undefined) {
+    conditions.push(
+      `variants.price:>${priceMin} AND variants.price:<${priceMax}`,
+    );
+  }
+
+  const fullQuery =
+    conditions.length > 0 ? conditions.join(" AND ") : undefined;
+
   const res = await shopifyFetch<any>({
     query: getProductsQuery,
     variables: {
-      query: query
-        ? `title:*${query}* OR tag:${query} OR vendor:${query}`
-        : undefined,
+      query: fullQuery,
       reverse,
       sortKey,
       first,
@@ -738,9 +768,11 @@ export async function getProducts({
   });
 
   const products = res.body.data?.products;
+  const filters = extractFilters(products?.edges || []);
 
   return {
     products: reshapeProducts(removeEdgesAndNodes(products)),
+    filters,
     pageInfo: products?.pageInfo || {
       hasNextPage: false,
       hasPreviousPage: false,

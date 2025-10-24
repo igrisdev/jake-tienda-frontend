@@ -2,18 +2,24 @@ import imageFragment from "./image";
 import seoFragment from "./seo";
 
 export const productFragment = /* GraphQl */ `
-    fragment product on Product {
+  fragment product on Product {
     id
     handle
     availableForSale
     title
     description
     descriptionHtml
+
+    # 🆕 Campos añadidos para los filtros
+    vendor
+    productType
+
     options {
       id
       name
       values
     }
+
     priceRange {
       maxVariantPrice {
         amount
@@ -24,6 +30,7 @@ export const productFragment = /* GraphQl */ `
         currencyCode
       }
     }
+
     variants(first: 250) {
       edges {
         node {
@@ -42,9 +49,12 @@ export const productFragment = /* GraphQl */ `
         }
       }
     }
+
+    # ✅ Restaurado: este campo es vital y no se elimina
     featuredImage {
       ...image
     }
+
     images(first: 20) {
       edges {
         node {
@@ -52,12 +62,36 @@ export const productFragment = /* GraphQl */ `
         }
       }
     }
+
+    # 🆕 Campos añadidos para los filtros por colección y metacampos
+    collections(first: 10) {
+      edges {
+        node {
+          id
+          handle
+          title
+        }
+      }
+    }
+
+    metafields(
+      identifiers: [
+        { namespace: "custom", key: "tecnologia" }
+        { namespace: "custom", key: "procesamiento" }
+        { namespace: "custom", key: "proveedor" }
+      ]
+    ) {
+      key
+      value
+    }
+
     seo {
       ...seo
     }
+
     tags
     updatedAt
-    }
-    ${imageFragment}
-    ${seoFragment}
+  }
+  ${imageFragment}
+  ${seoFragment}
 `;

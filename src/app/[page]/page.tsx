@@ -1,4 +1,4 @@
-import ViewMarkdown from "@/components/ViewMarkdown";
+import ViewMarkdown from "@/components/view-markdown";
 import { getPage } from "@/lib/shopify";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";

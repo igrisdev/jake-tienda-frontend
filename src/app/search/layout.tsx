@@ -1,8 +1,10 @@
 // app/search/layout.tsx
 import type { Metadata } from "next";
-import Collections from "@/components/layout/search/collections";
 import FilterList from "@/components/layout/search/filter";
 import { sorting } from "@/lib/constants";
+import { Brands } from "@/components/layout/search/brands";
+import { FiltersProvider } from "@/context/FiltersContext";
+import FiltersSidebar from "@/components/layout/search/filters-sidebar";
 
 export const metadata: Metadata = {
   title: "Buscar productos | Jake Tienda Electrónica",
@@ -48,16 +50,20 @@ export default function SearchLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="mx-auto flex max-w-7xl flex-col gap-8 px-4 pt-6 pb-4 text-black md:flex-row">
-      <div className="order-first flex-none md:w-max">
-        <Collections />
+    <FiltersProvider>
+      <div className="mx-auto flex max-w-7xl flex-col gap-8 px-4 pt-6 pb-4 text-black md:flex-row">
+        <div className="order-first flex-none md:w-max">
+          {/* <Collections /> */}
+          {/* <Brands /> */}
+          <FiltersSidebar />
+        </div>
+        <div className="order-last min-h-screen w-full md:order-none">
+          {children}
+        </div>
+        <div className="order-none flex-none md:order-last md:w-max">
+          <FilterList list={sorting} title="Ordenar por" />
+        </div>
       </div>
-      <div className="order-last min-h-screen w-full md:order-none">
-        {children}
-      </div>
-      <div className="order-none flex-none md:order-last md:w-max">
-        <FilterList list={sorting} title="Ordenar por" />
-      </div>
-    </div>
+    </FiltersProvider>
   );
 }

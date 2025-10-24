@@ -6,9 +6,9 @@ export async function GET(request: Request) {
   const query = searchParams.get("q") || "";
 
   try {
-    const products = await searchProducts({ query, first: 20 });
+    const { products, filters } = await searchProducts({ query, first: 20 });
 
-    return NextResponse.json(products);
+    return NextResponse.json({ products, filters });
   } catch (error) {
     console.error("Error en la búsqueda de productos:", error);
     return new NextResponse("Server Error", { status: 500 });

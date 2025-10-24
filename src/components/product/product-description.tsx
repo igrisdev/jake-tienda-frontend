@@ -1,6 +1,6 @@
 "use client";
 
-import ViewMarkdown from "../ViewMarkdown";
+import ViewMarkdown from "../view-markdown";
 
 interface Props {
   description: string;
