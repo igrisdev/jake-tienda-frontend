@@ -1,0 +1,23 @@
+# netlify.toml
+
+# 0) Página informativa accesible incluso para países bloqueados
+[[redirects]]
+from = "/solo-colombia"
+to = "/solo-colombia.html"
+status = 200
+force = true
+
+# 1) Allowlist: pasa todo el tráfico de colombia, ecuador, venezuela y panama
+[[redirects]]
+from = "/*"
+to = "/:splat"
+status = 200
+force = true
+conditions = { Country = "CO,VE,EC,PA" }
+
+# 2) Bloqueo para el resto: redirige a la página estática
+[[redirects]]
+from = "/*"
+to = "/solo-colombia"
+status = 302
+force = true
