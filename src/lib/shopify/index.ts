@@ -523,6 +523,20 @@ export async function revalidate(req: NextRequest): Promise<NextResponse> {
   const topic = req.headers.get("x-shopify-topic") || "unknown";
   const secret = req.nextUrl.searchParams.get("secret");
 
+  console.log(
+    "-------------------------------------------------------------------------------------",
+  );
+  console.log("secret.");
+  console.log(
+    "-------------------------------------------------------------------------------------",
+  );
+  if (!secret || secret !== process.env.SHOPIFY_REVALIDATION_SECRET) {
+    console.log("Invalid revalidation secret");
+  }
+  console.log(
+    "-------------------------------------------------------------------------------------",
+  );
+
   const collectionWebhooks = [
     "collections/create",
     "collections/delete",
