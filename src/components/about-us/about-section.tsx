@@ -84,13 +84,13 @@ export default function AboutSection() {
       <div className="mx-auto flex max-w-7xl flex-col space-y-16 px-6 py-10 lg:px-20">
         <section className="grid grid-cols-1 items-center gap-10 lg:grid-cols-2">
          <div className="relative w-full">
-          <Image
-            src={founderImg ?? "not-found.png"}
-            alt="Fundador de jake Popayán"
-            width={800}
-            height={800}
-            className="mask-b-from-70% mask-b-to-90% object-cover"
-          />
+          {/* <Image
+  src={founderImg ?? "not-found.png"}
+  alt="Fundador de jake Popayán"
+  width={800}
+  height={800}
+  className="mask-b-from-70% mask-b-to-90% object-cover"
+/> */}
         </div>
 
 
