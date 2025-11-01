@@ -24,7 +24,7 @@ export default function Gallery({
   return (
     <form>
       <div className="relative aspect-square h-full max-h-[550px] w-full overflow-hidden">
-        {images[imageIndex] && (
+        {images.length != 0 && images[imageIndex] ? (
           // <Image
           //   className="object-contain"
           //   fill
@@ -37,6 +37,12 @@ export default function Gallery({
           <img
             src={images[imageIndex]?.src}
             alt={images[imageIndex]?.altText || "Product image"}
+            className="h-full w-full object-contain"
+          />
+        ) : (
+          <img
+            src={"/not-found.png"}
+            alt={"No image found"}
             className="h-full w-full object-contain"
           />
         )}
