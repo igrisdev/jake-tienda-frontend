@@ -79,7 +79,7 @@ export default function AboutSection() {
           como quiere.
         </p>
       </div>
-{/* cambio para comprobar  */}
+
       {/* Founder + Story */}
       <div className="mx-auto flex max-w-7xl flex-col space-y-16 px-6 py-10 lg:px-20">
         <section className="grid grid-cols-1 items-center gap-10 lg:grid-cols-2">
