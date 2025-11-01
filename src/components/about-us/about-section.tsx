@@ -85,7 +85,7 @@ export default function AboutSection() {
         <section className="grid grid-cols-1 items-center gap-10 lg:grid-cols-2">
          <div className="relative w-full">
           <Image
-            src={founderImg ?? "src/assets/images/Kevin.jpeg"}
+            src={founderImg ?? "not-found.png"}
             alt="Fundador de jake Popayán"
             width={800}
             height={800}
