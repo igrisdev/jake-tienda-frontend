@@ -314,7 +314,6 @@ export async function getCollections(): Promise<Collection[]> {
       path: "/search",
       updatedAt: new Date().toISOString(),
     },
-    // Filter out the hidden products
     ...reshapeCollections(shopifyCollections).filter(
       (collection) => !collection.handle.startsWith("hidden"),
     ),
@@ -455,7 +454,6 @@ export async function revalidate(req: NextRequest): Promise<NextResponse> {
 
   const isCollectionUpdate = collectionWebhooks.includes(topic);
   const isProductUpdate = productWebhooks.includes(topic);
-  // const isMetaobjectUpdate = metaobjectWebhooks.includes(topic);
 
   if (!secret || secret !== process.env.SHOPIFY_REVALIDATION_SECRET) {
     console.error("Invalid revalidation secret.");
@@ -469,10 +467,12 @@ export async function revalidate(req: NextRequest): Promise<NextResponse> {
   if (isCollectionUpdate) {
     revalidateTag(TAGS.collections);
     revalidatePath("/");
+    revalidatePath("/search", "layout");
   }
   if (isProductUpdate) {
     revalidateTag(TAGS.products);
     revalidatePath("/");
+    revalidatePath("/search", "layout");
   }
 
   return NextResponse.json({ status: 200, revalidated: true, now: Date.now() });
