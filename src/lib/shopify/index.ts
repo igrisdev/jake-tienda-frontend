@@ -471,6 +471,7 @@ export async function revalidate(req: NextRequest): Promise<NextResponse> {
   }
   if (isProductUpdate) {
     revalidateTag(TAGS.products);
+    revalidateTag(TAGS.collections);
     revalidatePath("/");
     revalidatePath("/search", "layout");
   }
