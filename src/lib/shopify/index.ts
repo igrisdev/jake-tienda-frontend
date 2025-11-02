@@ -67,9 +67,6 @@ type ExtractVariables<T> = T extends { variables: object }
   ? T["variables"]
   : never;
 
-// ============================================
-// OPTIMIZACIÓN: Cache en memoria para reshapes
-// ============================================
 const reshapeCache = new Map<string, { value: any; timestamp: number }>();
 const CACHE_TTL = 60000; // 1 minuto
 
@@ -85,7 +82,6 @@ function setCache(key: string, value: any) {
   reshapeCache.set(key, { value, timestamp: Date.now() });
 }
 
-// Limpieza periódica del cache
 if (typeof setInterval !== "undefined") {
   setInterval(() => {
     const now = Date.now();
@@ -523,20 +519,6 @@ export async function revalidate(req: NextRequest): Promise<NextResponse> {
   const topic = req.headers.get("x-shopify-topic") || "unknown";
   const secret = req.nextUrl.searchParams.get("secret");
 
-  console.log(
-    "-------------------------------------------------------------------------------------",
-  );
-  console.log("secret.");
-  console.log(
-    "-------------------------------------------------------------------------------------",
-  );
-  if (!secret || secret !== process.env.SHOPIFY_REVALIDATION_SECRET) {
-    console.log("Invalid revalidation secret");
-  }
-  console.log(
-    "-------------------------------------------------------------------------------------",
-  );
-
   const collectionWebhooks = [
     "collections/create",
     "collections/delete",
@@ -563,10 +545,13 @@ export async function revalidate(req: NextRequest): Promise<NextResponse> {
   if (isCollectionUpdate) {
     revalidateTag(TAGS.collections);
     revalidatePath("/");
+    revalidatePath("/search");
   }
   if (isProductUpdate) {
     revalidateTag(TAGS.products);
+    revalidateTag(TAGS.collections);
     revalidatePath("/");
+    revalidatePath("/search");
   }
 
   return NextResponse.json({ status: 200, revalidated: true, now: Date.now() });
@@ -691,9 +676,6 @@ export async function getNewProducts(): Promise<Product[]> {
   return reshapeProducts(removeEdgesAndNodes(res.body.data.products));
 }
 
-// ============================================
-// OPTIMIZACIÓN CRÍTICA: searchProducts sin doble fetch
-// ============================================
 export async function searchProducts({
   query,
   first = 20,
@@ -715,9 +697,6 @@ export async function searchProducts({
   return reshapeProducts(removeEdgesAndNodes(res.body.data?.products));
 }
 
-// ============================================
-// OPTIMIZACIÓN CRÍTICA: getProducts sin doble fetch
-// ============================================
 export async function getProducts({
   query,
   reverse,
