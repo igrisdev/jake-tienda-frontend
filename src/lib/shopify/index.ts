@@ -67,32 +67,6 @@ type ExtractVariables<T> = T extends { variables: object }
   ? T["variables"]
   : never;
 
-const reshapeCache = new Map<string, { value: any; timestamp: number }>();
-const CACHE_TTL = 60000; // 1 minuto
-
-function getCached<T>(key: string): T | null {
-  const cached = reshapeCache.get(key);
-  if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
-    return cached.value;
-  }
-  return null;
-}
-
-function setCache(key: string, value: any) {
-  reshapeCache.set(key, { value, timestamp: Date.now() });
-}
-
-if (typeof setInterval !== "undefined") {
-  setInterval(() => {
-    const now = Date.now();
-    for (const [key, value] of reshapeCache.entries()) {
-      if (now - value.timestamp > CACHE_TTL) {
-        reshapeCache.delete(key);
-      }
-    }
-  }, CACHE_TTL);
-}
-
 export async function shopifyFetch<T>({
   cache = "force-cache",
   headers,
@@ -154,9 +128,6 @@ function removeEdgesAndNodes<T>(array: Connection<T> | null | undefined): T[] {
   return array.edges.map((edge) => edge?.node).filter(Boolean) as T[];
 }
 
-// ============================================
-// OPTIMIZACIÓN: Reshape simplificado sin regex
-// ============================================
 function reshapeImages(images: Connection<Image>, productTitle: string) {
   if (!images?.edges) return [];
 
@@ -179,11 +150,6 @@ function reshapeProduct(
 ) {
   if (!product) return undefined;
 
-  // Check cache primero
-  const cacheKey = `product:${product.id}:${filterHiddenProducts}`;
-  const cached = getCached<Product>(cacheKey);
-  if (cached) return cached;
-
   if (filterHiddenProducts && product.tags.includes(HIDDEN_PRODUCT_TAG)) {
     return undefined;
   }
@@ -196,7 +162,6 @@ function reshapeProduct(
     variants: removeEdgesAndNodes(variants),
   };
 
-  setCache(cacheKey, reshaped);
   return reshaped;
 }
 
