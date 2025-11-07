@@ -133,7 +133,7 @@ export const ProductInfo = ({ product }: { product: Product }) => {
           currencyCode={currency}
         />
         <p className="text-sm text-gray-600">
-          Financia tu compra con Addi (+7%)
+          Financia tu compra con Addi desde WhatsApp 
         </p>
         <button
           onClick={() => setShowAddiModal(true)}
