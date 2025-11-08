@@ -116,7 +116,7 @@ export default function Gallery({
           reactModalStyle={{
             overlay: { backgroundColor: "rgba(0,0,0,0.9)" },
           }}
-          preloadNextImage={false}
+          
           toolbarButtons={[]}
         />
       )}
