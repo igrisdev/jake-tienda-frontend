@@ -467,14 +467,14 @@ export async function revalidate(req: NextRequest): Promise<NextResponse> {
     revalidateTag(TAGS.collections);
     revalidatePath("/");
     // revalidatePath("/search", "layout");
-    // revalidatePath("/search");
+    revalidatePath("/search");
   }
 
   if (isProductUpdate) {
     revalidateTag(TAGS.products);
     // revalidateTag(TAGS.collections);
     revalidatePath("/");
-    // revalidatePath("/search");
+    revalidatePath("/search");
     // revalidatePath("/search", "layout");
   }
 
