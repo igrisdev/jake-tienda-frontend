@@ -1,7 +1,10 @@
+export const revalidate = 60;
+
 import { Pagination } from "@/components/common/pagination";
 import Grid from "@/components/grid";
 import ProductGridItems from "@/components/layout/product-grid-items";
 import { getCollectionProducts } from "@/lib/shopify";
+
 
 import type { Metadata } from "next";
 
