@@ -27,7 +27,7 @@ export const CarouselBrands = ({ brands }: { brands: ICategoryCart[] }) => {
             <Link
               key={idx}
               href={brand.path + "?title=Marca" + "&collection=" + brand.title}
-              className="relative h-24 w-48 flex-shrink-0 items-center justify-center transition-transform hover:scale-105"
+              className="relative h-24 w-48 shrink-0 items-center justify-center transition-transform hover:scale-105"
             >
               {/* <Image
                 src={brand.image ?? "/not-found.png"}

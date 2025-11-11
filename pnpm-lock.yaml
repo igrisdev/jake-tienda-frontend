@@ -53,6 +53,9 @@ importers:
       react-markdown:
         specifier: ^10.1.0
         version: 10.1.0(@types/react@19.2.2)(react@19.1.0)
+      react-range:
+        specifier: ^1.10.0
+        version: 1.10.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       rehype-raw:
         specifier: ^7.0.0
         version: 7.0.0
@@ -2168,6 +2171,12 @@ packages:
     peerDependencies:
       react: ^0.14.0 || ^15.0.0 || ^16 || ^17 || ^18 || ^19
       react-dom: ^0.14.0 || ^15.0.0 || ^16 || ^17 || ^18 || ^19
+
+  react-range@1.10.0:
+    resolution: {integrity: sha512-kDo0LiBUHIQIP8menx0UoxTnHr7UXBYpIYl/DR9jCaO1o29VwvCLpkP/qOTNQz5hkJadPg1uEM07XJcJ1XGoKw==}
+    peerDependencies:
+      react: '*'
+      react-dom: '*'
 
   react-required-if@1.0.1:
     resolution: {integrity: sha512-n0HDT1G/1GoWvX7HcGzBOVwgfrbaymtEoYBkKOOhca3ThXQYFMjI3uKWcc5DSBHpPbSEJPPWEAV6Zu9BrSG+rg==}
@@ -4914,6 +4923,11 @@ snapshots:
       react-dom: 19.1.0(react@19.1.0)
       react-lifecycles-compat: 3.0.4
       warning: 4.0.3
+
+  react-range@1.10.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
+    dependencies:
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
 
   react-required-if@1.0.1: {}
 
