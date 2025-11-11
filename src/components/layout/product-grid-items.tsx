@@ -39,9 +39,14 @@ export const ProductCard = ({ product }: { product: Product }) => {
             priority
             // unoptimized
           /> */}
+          {!product.availableForSale && (
+            <div className="absolute top-0 left-0 z-10 flex items-center justify-center rounded-full bg-black/80 px-2 py-1 text-xs text-white backdrop-blur-2xl">
+              <span>Agotado</span>
+            </div>
+          )}
           <img
-            src={product.featuredImage.url ?? "/not-found.png"}
-            alt={product.featuredImage.altText || product.title}
+            src={product.featuredImage?.url ?? "/not-found.png"}
+            alt={product.featuredImage?.altText || product.title}
             className="h-[300px] w-[300px] object-contain"
           />
         </header>

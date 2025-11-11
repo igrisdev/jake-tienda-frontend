@@ -16,7 +16,7 @@ const BANCO_BOGOTA_URL =
 const ADDI_PREAPPROVAL_URL =
   process.env.NEXT_PUBLIC_ADDI_URL || "https://co.addi.com/";
 
-const ADDI_RATE = 0.05; // +5%
+const ADDI_RATE = 0.07; // +7%
 const DIRECT_DISCOUNT = 0.04; // -4%
 
 export const ProductInfo = ({ product }: { product: Product }) => {
@@ -49,11 +49,13 @@ export const ProductInfo = ({ product }: { product: Product }) => {
     )}.`,
   )}`;
 
-  const addiWhatsAppHref = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
-    `Hola, quiero financiar mi compra del producto "${product.title}" con Addi. El valor total del producto con el incremento del 5% es ${(
-      baseAmount * 1.05
-    ).toLocaleString("es-CO", { style: "currency", currency })}.`,
-  )}`;
+ const addiWhatsAppHref = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+  `Hola, quiero financiar mi compra del producto "${product.title}" con Addi. El valor total del producto es de ${(
+    baseAmount * 1.07
+  ).toLocaleString("es-CO", { style: "currency", currency })}.`
+)}`;
+
+
 
   // Cerrar modal con ESC
   useEffect(() => {
@@ -129,7 +131,7 @@ export const ProductInfo = ({ product }: { product: Product }) => {
           currencyCode={currency}
         />
         <p className="text-sm text-gray-600">
-          Financia tu compra con Addi (+5%)
+          Financia tu compra con Addi desde WhatsApp 
         </p>
         <button
           onClick={() => setShowAddiModal(true)}

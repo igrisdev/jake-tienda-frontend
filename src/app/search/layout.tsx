@@ -1,4 +1,3 @@
-// app/search/layout.tsx
 import type { Metadata } from "next";
 import FilterList from "@/components/layout/search/filter";
 import { sorting } from "@/lib/constants";

@@ -1,7 +1,6 @@
 import { Pagination } from "@/components/common/pagination";
 import Grid from "@/components/grid";
 import ProductGridItems from "@/components/layout/product-grid-items";
-import { defaultSort, sorting } from "@/lib/constants";
 import { getCollectionProducts } from "@/lib/shopify";
 
 import type { Metadata } from "next";
@@ -74,22 +73,19 @@ export default async function CategoryPage(props: {
   params: Promise<{ collection: string }>;
   searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  const { collection } = await props.params; // 👈 await aquí
-  const searchParams = await props.searchParams; // 👈 await aquí
+  const { collection } = await props.params;
+  const searchParams = await props.searchParams;
 
   const { sort, after, before, page, title } = (searchParams || {}) as {
     [key: string]: string;
   };
 
-  const { sortKey, reverse } =
-    sorting.find((item) => item.slug === sort) || defaultSort;
-
   const currentPage = parseInt(page || "1", 10);
 
   const { products, pageInfo } = await getCollectionProducts({
     collection,
-    sortKey,
-    reverse,
+    sortKey: "PRICE",
+    reverse: false,
     first: before ? undefined : 18,
     last: before ? 18 : undefined,
     after,
