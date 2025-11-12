@@ -58,6 +58,7 @@ import { getBestProductPosterQuery } from "./queries/best-product";
 import { ICategoryCart } from "@/types/category";
 import { console } from "inspector";
 import { Filters } from "@/context/FiltersContext";
+import { getInitialFilterData } from "./queries/filters";
 
 const domain = process.env.SHOPIFY_STORE_DOMAIN
   ? ensureStartWith(process.env.SHOPIFY_STORE_DOMAIN, "https://")
@@ -676,12 +677,13 @@ export async function getProducts({
   query,
   reverse,
   sortKey,
-  first = 18,
+  first = 20,
   after,
   before,
   last,
   brands,
   category,
+  types,
   priceMin,
   priceMax,
 }: {
@@ -692,38 +694,62 @@ export async function getProducts({
   after?: string;
   before?: string;
   last?: number;
-  brands?: string;
-  category?: string;
+  // Añadimos los nuevos parámetros de filtro
+  brands?: string | string[];
+  category?: string | string[];
+  types?: string | string[];
   priceMin?: number;
   priceMax?: number;
 }) {
-  // Volvemos a la lógica de construir una única cadena de consulta
-  const conditions: string[] = [];
+  // 1. Construir la cadena de consulta para la API de Shopify
+  const filterClauses: string[] = [];
 
-  if (query) conditions.push(`(title:*${query}* OR tag:${query})`);
-
-  // Para los filtros, los unimos con AND. Es importante escapar los valores si pueden contener espacios.
-  if (brands) conditions.push(`vendor:'${brands}'`);
-  if (category) conditions.push(`product_type:'${category}'`);
-
-  // Shopify no soporta filtros de rango de precio directamente en la query de esta manera.
-  // La API de filtros que intentamos usar era para esto. Por ahora, lo comentaremos
-  // para que el resto funcione. Luego podemos ver alternativas para el precio.
-  /*
-  if (priceMin !== undefined && priceMax !== undefined) {
-    conditions.push(
-      `variants.price:>=${priceMin} AND variants.price:<=${priceMax}`,
-    );
+  // Búsqueda de texto general
+  if (query) {
+    filterClauses.push(`(title:*${query}* OR tag:${query} OR vendor:${query})`);
   }
-  */
 
-  const fullQuery =
-    conditions.length > 0 ? conditions.join(" AND ") : undefined;
+  // Filtro por Marcas (vendor)
+  if (brands && brands.length > 0) {
+    const brandClauses = (Array.isArray(brands) ? brands : [brands])
+      .map((b) => `vendor:'${b}'`)
+      .join(" OR ");
+    filterClauses.push(`(${brandClauses})`);
+  }
 
+  // Filtro por Categorías (tag)
+  if (category && category.length > 0) {
+    const categoryClauses = (Array.isArray(category) ? category : [category])
+      .map((c) => `tag:'${c}'`)
+      .join(" OR ");
+    filterClauses.push(`(${categoryClauses})`);
+  }
+
+  // Filtro por Tipo de Producto (product_type)
+  if (types && types.length > 0) {
+    const typeClauses = (Array.isArray(types) ? types : [types])
+      .map((t) => `product_type:'${t}'`)
+      .join(" OR ");
+    filterClauses.push(`(${typeClauses})`);
+  }
+
+  // Filtro por Rango de Precios
+  if (priceMin !== undefined) {
+    filterClauses.push(`(price:>=${priceMin})`);
+  }
+  if (priceMax !== undefined) {
+    filterClauses.push(`(price:<=${priceMax})`);
+  }
+
+  // Unimos todas las cláusulas con 'AND'
+  const finalQuery = filterClauses.join(" AND ");
+
+  // 2. Realizar la llamada a la API con la consulta construida
   const res = await shopifyFetch<any>({
-    query: getProductsQuery, // La consulta ya está corregida
+    query: getProductsQuery,
     variables: {
-      query: fullQuery,
+      // Usamos la cadena 'finalQuery' que acabamos de crear
+      query: finalQuery || undefined, // Enviar undefined si no hay filtros para obtener todos
       reverse,
       sortKey,
       first,
@@ -734,19 +760,152 @@ export async function getProducts({
     tags: [TAGS.collections, TAGS.products],
   });
 
-  const productsResult = res.body.data?.products;
+  const products = res.body.data?.products;
 
-  // ✅ LA MEJORA: Ya no usamos extractFilters. Usamos los filtros del servidor.
-  const filters = reshapeShopifyFilters(productsResult?.filters || []);
-
+  // El resto de la función sigue igual
   return {
-    products: reshapeProducts(removeEdgesAndNodes(productsResult)),
-    filters, // ¡Aquí están tus filtros facetados y correctos!
-    pageInfo: productsResult?.pageInfo || {
+    products: reshapeProducts(removeEdgesAndNodes(products)),
+    pageInfo: products?.pageInfo || {
       hasNextPage: false,
       hasPreviousPage: false,
       startCursor: null,
       endCursor: null,
     },
   };
+}
+
+// export async function getProducts({
+//   query,
+//   reverse,
+//   sortKey,
+//   first = 20,
+//   after,
+//   before,
+//   last,
+// }: {
+//   query?: string;
+//   reverse?: boolean;
+//   sortKey?: string;
+//   first?: number;
+//   after?: string;
+//   before?: string;
+//   last?: number;
+// }) {
+//   const res = await shopifyFetch<any>({
+//     query: getProductsQuery,
+//     variables: {
+//       query: query
+//         ? `title:*${query}* OR tag:${query} OR vendor:${query}`
+//         : undefined,
+//       reverse,
+//       sortKey,
+//       first,
+//       after,
+//       before,
+//       last,
+//     },
+//     tags: [TAGS.collections, TAGS.products],
+//   });
+
+//   const products = res.body.data?.products;
+
+//   const filters = extractFilters(products?.edges || []);
+
+//   return {
+//     products: reshapeProducts(removeEdgesAndNodes(products)),
+//     filters,
+//     pageInfo: products?.pageInfo || {
+//       hasNextPage: false,
+//       hasPreviousPage: false,
+//       startCursor: null,
+//       endCursor: null,
+//     },
+//   };
+// }
+
+// export async function getProducts({
+//   query,
+//   reverse,
+//   sortKey,
+//   first = 18,
+//   after,
+//   before,
+//   last,
+//   brands,
+//   category,
+//   priceMin,
+//   priceMax,
+// }: {
+//   query?: string;
+//   reverse?: boolean;
+//   sortKey?: string;
+//   first?: number;
+//   after?: string;
+//   before?: string;
+//   last?: number;
+//   brands?: string;
+//   category?: string;
+//   priceMin?: number;
+//   priceMax?: number;
+// }) {
+//   // Volvemos a la lógica de construir una única cadena de consulta
+//   const conditions: string[] = [];
+
+//   if (query) conditions.push(`(title:*${query}* OR tag:${query})`);
+
+//   // Para los filtros, los unimos con AND. Es importante escapar los valores si pueden contener espacios.
+//   if (brands) conditions.push(`vendor:'${brands}'`);
+//   if (category) conditions.push(`product_type:'${category}'`);
+
+//   // Shopify no soporta filtros de rango de precio directamente en la query de esta manera.
+//   // La API de filtros que intentamos usar era para esto. Por ahora, lo comentaremos
+//   // para que el resto funcione. Luego podemos ver alternativas para el precio.
+//   /*
+//   if (priceMin !== undefined && priceMax !== undefined) {
+//     conditions.push(
+//       `variants.price:>=${priceMin} AND variants.price:<=${priceMax}`,
+//     );
+//   }
+//   */
+
+//   const fullQuery =
+//     conditions.length > 0 ? conditions.join(" AND ") : undefined;
+
+//   const res = await shopifyFetch<any>({
+//     query: getProductsQuery, // La consulta ya está corregida
+//     variables: {
+//       query: fullQuery,
+//       reverse,
+//       sortKey,
+//       first,
+//       after,
+//       before,
+//       last,
+//     },
+//     tags: [TAGS.collections, TAGS.products],
+//   });
+
+//   const productsResult = res.body.data?.products;
+
+//   // ✅ LA MEJORA: Ya no usamos extractFilters. Usamos los filtros del servidor.
+//   const filters = reshapeShopifyFilters(productsResult?.filters || []);
+
+//   return {
+//     products: reshapeProducts(removeEdgesAndNodes(productsResult)),
+//     filters, // ¡Aquí están tus filtros facetados y correctos!
+//     pageInfo: productsResult?.pageInfo || {
+//       hasNextPage: false,
+//       hasPreviousPage: false,
+//       startCursor: null,
+//       endCursor: null,
+//     },
+//   };
+// }
+
+export async function initialFilterData() {
+  const res = await shopifyFetch<ShopifyProductsOperation>({
+    query: getInitialFilterData,
+  });
+
+  return res.body;
 }

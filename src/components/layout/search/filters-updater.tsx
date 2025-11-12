@@ -1,14 +1,18 @@
 "use client";
 
 import { useEffect } from "react";
-import { useFilters, Filters } from "@/context/FiltersContext";
+import { useFilters, AvailableFilters } from "@/context/FiltersContext";
 
-export default function FiltersUpdater({ filters }: { filters: Filters }) {
-  const { setFilters } = useFilters();
+export default function FiltersUpdater({
+  initialFilters,
+}: {
+  initialFilters: AvailableFilters;
+}) {
+  const { setAvailableFilters } = useFilters();
 
   useEffect(() => {
-    setFilters(filters);
-  }, [filters, setFilters]);
+    setAvailableFilters(initialFilters);
+  }, [initialFilters, setAvailableFilters]);
 
   return null;
 }

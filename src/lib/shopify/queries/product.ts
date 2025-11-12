@@ -31,8 +31,53 @@ export const getNewProductsQuery = /* GraphQL */ `
   ${productFragment}
 `;
 
+// export const getProductsQuery = /* GraphQL */ `
+//   query getProducts(
+//     $sortKey: ProductSortKeys
+//     $reverse: Boolean
+//     $query: String
+//     $first: Int
+//     $after: String
+//     $before: String
+//     $last: Int
+//   ) {
+//     products(
+//       sortKey: $sortKey
+//       reverse: $reverse
+//       query: $query
+//       first: $first
+//       after: $after
+//       before: $before
+//       last: $last
+//     ) {
+//       filters {
+//         id
+//         label
+//         type
+//         values {
+//           id
+//           label
+//           count
+//           input
+//         }
+//       }
+//       pageInfo {
+//         hasNextPage
+//         hasPreviousPage
+//         startCursor
+//         endCursor
+//       }
+//       edges {
+//         node {
+//           ...product
+//         }
+//       }
+//     }
+//   }
+//   ${productFragment}
+// `;
+
 export const getProductsQuery = /* GraphQL */ `
-  # 👇 CORRECCIÓN: Eliminamos la variable $filters de aquí
   query getProducts(
     $sortKey: ProductSortKeys
     $reverse: Boolean
@@ -49,20 +94,8 @@ export const getProductsQuery = /* GraphQL */ `
       first: $first
       after: $after
       before: $before
-      last: $last # 👇 CORRECCIÓN: Eliminamos el argumento filters: $filters
+      last: $last
     ) {
-      # ✅ MANTENEMOS ESTO: Esta es la clave. Pedimos los filtros disponibles en la RESPUESTA.
-      filters {
-        id
-        label
-        type
-        values {
-          id
-          label
-          count
-          input
-        }
-      }
       pageInfo {
         hasNextPage
         hasPreviousPage

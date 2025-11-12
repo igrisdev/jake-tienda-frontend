@@ -10,7 +10,6 @@ export const productFragment = /* GraphQl */ `
     description
     descriptionHtml
 
-    # 🆕 Campos añadidos para los filtros
     vendor
     productType
 
@@ -50,7 +49,6 @@ export const productFragment = /* GraphQl */ `
       }
     }
 
-    # ✅ Restaurado: este campo es vital y no se elimina
     featuredImage {
       ...image
     }
@@ -63,7 +61,6 @@ export const productFragment = /* GraphQl */ `
       }
     }
 
-    # 🆕 Campos añadidos para los filtros por colección y metacampos
     collections(first: 10) {
       edges {
         node {

@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import FilterList from "@/components/layout/search/filter";
 import { sorting } from "@/lib/constants";
-import { Brands } from "@/components/layout/search/brands";
 import { FiltersProvider } from "@/context/FiltersContext";
-import FiltersSidebar from "@/components/layout/search/filters-sidebar";
+import { FiltersSidebar } from "@/components/layout/search/filters-sidebar";
 
 export const metadata: Metadata = {
   title: "Buscar productos | Jake Tienda Electrónica",

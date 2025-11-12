@@ -1,21 +1,23 @@
 import { Pagination } from "@/components/common/pagination";
 import Grid from "@/components/grid";
 import ProductGridItems from "@/components/layout/product-grid-items";
-import { getProducts } from "@/lib/shopify";
+import { getProducts, initialFilterData } from "@/lib/shopify";
 import { sorting, defaultSort } from "@/lib/constants";
 import FiltersUpdater from "@/components/layout/search/filters-updater";
 
 export default async function SearchPage({
   searchParams,
 }: {
-  searchParams?: Promise<Record<string, string | string[] | undefined>>;
+  searchParams?: { [key: string]: string | string[] | undefined };
 }) {
-  const sp = await searchParams;
+  const sp = searchParams || {};
 
+  // Leer parámetros de la URL. Ahora se pasan directamente.
   const sort = (sp?.sort as string) ?? "";
   const searchValue = (sp?.q as string) ?? "";
-  const brands = (sp?.brands as string) ?? "";
-  const category = (sp?.category as string) ?? "";
+  const brands = sp?.brands; // Puede ser string o string[]
+  const category = sp?.category; // Puede ser string o string[]
+  const types = sp?.types; // Añadido para consistencia
   const priceMin = sp?.price_min ? Number(sp.price_min) : undefined;
   const priceMax = sp?.price_max ? Number(sp.price_max) : undefined;
 
@@ -26,7 +28,8 @@ export default async function SearchPage({
   const { sortKey, reverse } =
     sorting.find((item) => item.slug === sort) || defaultSort;
 
-  const { products, pageInfo, filters } = await getProducts({
+  // Pasamos todos los filtros a getProducts
+  const { products, pageInfo } = await getProducts({
     sortKey,
     reverse,
     query: searchValue,
@@ -36,18 +39,48 @@ export default async function SearchPage({
     before,
     brands,
     category,
+    types, // Pasamos los tipos también
     priceMin,
     priceMax,
   });
 
+  const body = await initialFilterData();
+
+  const categories = body.data.productTypes.edges.map((edge: any) => edge.node);
+  const tags = body.data.productTags.edges.map((edge: any) => edge.node);
+  const allVendors = body.data.products.edges.map(
+    (edge: any) => edge.node.vendor,
+  );
+  const uniqueVendors = [...new Set(allVendors)];
+  const allPrices = body.data.products.edges.map((edge: any) =>
+    parseFloat(edge.node.priceRange.maxVariantPrice.amount),
+  );
+  const priceRange = {
+    min: allPrices.length ? Math.min(...allPrices) : 0,
+    max: allPrices.length ? Math.max(...allPrices) : 0,
+  };
+
+  const initialFilters = {
+    brands: uniqueVendors,
+    categories: categories,
+    types: tags,
+    priceRange: priceRange,
+  };
+
+  console.log(initialFilters);
+
   return (
     <div className="flex gap-6">
-      <FiltersUpdater filters={filters} />
+      <FiltersUpdater initialFilters={initialFilters} />
 
       <div className="flex-1">
-        <Grid className="grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-          <ProductGridItems products={products} />
-        </Grid>
+        {products.length === 0 ? (
+          <p>No se encontraron productos con estos filtros.</p>
+        ) : (
+          <Grid className="grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+            <ProductGridItems products={products} />
+          </Grid>
+        )}
         <Pagination
           pageInfo={pageInfo}
           currentPage={page}
