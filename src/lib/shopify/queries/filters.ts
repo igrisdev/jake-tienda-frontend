@@ -1,14 +1,14 @@
 export const getInitialFilterData = /* GraphQL */ `
   query getInitialFilterData {
-    # 1. Para el filtro "TIPO DE PRODUCTO"
+    # 1. Para el filtro "CATEGORÍAS"
     # Obtiene una lista de todos los tipos de producto únicos en tu tienda.
-    productTypes(first: 100) {
+    productTypes(first: 250) {
       edges {
         node
       }
     }
 
-    # 2. Para el filtro "CATEGORÍAS" (usando etiquetas)
+    # 2. Para el filtro "TIPO DE PRODUCTO" (usando etiquetas)
     # Obtiene una lista de todas las etiquetas únicas.
     productTags(first: 250) {
       edges {

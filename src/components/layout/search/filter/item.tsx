@@ -16,9 +16,14 @@ function PathFilterItem({ item }: { item: PathFilterItem }) {
 
   newParams.delete("q");
   newParams.delete("sort");
-  newParams.delete("before");
-  newParams.delete("after");
+  newParams.delete("brands");
+  newParams.delete("category");
+  newParams.delete("types");
+  newParams.delete("price_min");
+  newParams.delete("price_max");
   newParams.delete("page");
+  newParams.delete("after");
+  newParams.delete("before");
 
   return (
     <li className="mt-2 flex text-black" key={item.title}>
@@ -38,15 +43,29 @@ function SortFilterItem({ item }: { item: SortFilterItem }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const active = searchParams.get("sort") === item.slug;
-  const q = searchParams.get("q");
 
-  const href = createUrl(
-    pathname,
-    new URLSearchParams({
-      ...(q && { q }),
-      ...(item.slug && item.slug.length && { sort: item.slug }),
-    }),
-  );
+  const newParams = new URLSearchParams();
+
+  const q = searchParams.get("q");
+  const brands = searchParams.getAll("brands");
+  const category = searchParams.getAll("category");
+  const types = searchParams.getAll("types");
+  const priceMin = searchParams.get("price_min");
+  const priceMax = searchParams.get("price_max");
+
+  if (q) newParams.set("q", q);
+  if (priceMin) newParams.set("price_min", priceMin);
+  if (priceMax) newParams.set("price_max", priceMax);
+
+  brands.forEach((brand) => newParams.append("brands", brand));
+  category.forEach((cat) => newParams.append("category", cat));
+  types.forEach((type) => newParams.append("types", type));
+
+  if (item.slug) {
+    newParams.set("sort", item.slug);
+  }
+
+  const href = createUrl(pathname, newParams);
   const DynamicTag = active ? "p" : Link;
 
   return (

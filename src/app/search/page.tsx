@@ -10,14 +10,13 @@ export default async function SearchPage({
 }: {
   searchParams?: { [key: string]: string | string[] | undefined };
 }) {
-  const sp = searchParams || {};
+  const sp = (await searchParams) || {};
 
-  // Leer parámetros de la URL. Ahora se pasan directamente.
   const sort = (sp?.sort as string) ?? "";
   const searchValue = (sp?.q as string) ?? "";
-  const brands = sp?.brands; // Puede ser string o string[]
-  const category = sp?.category; // Puede ser string o string[]
-  const types = sp?.types; // Añadido para consistencia
+  const brands = sp?.brands;
+  const category = sp?.category;
+  const types = sp?.types;
   const priceMin = sp?.price_min ? Number(sp.price_min) : undefined;
   const priceMax = sp?.price_max ? Number(sp.price_max) : undefined;
 
@@ -28,7 +27,6 @@ export default async function SearchPage({
   const { sortKey, reverse } =
     sorting.find((item) => item.slug === sort) || defaultSort;
 
-  // Pasamos todos los filtros a getProducts
   const { products, pageInfo } = await getProducts({
     sortKey,
     reverse,
@@ -39,19 +37,24 @@ export default async function SearchPage({
     before,
     brands,
     category,
-    types, // Pasamos los tipos también
+    types,
     priceMin,
     priceMax,
   });
 
   const body = await initialFilterData();
 
-  const categories = body.data.productTypes.edges.map((edge: any) => edge.node);
-  const tags = body.data.productTags.edges.map((edge: any) => edge.node);
+  const productTypes = body.data.productTypes.edges
+    .map((edge: any) => edge.node)
+    .filter((item: any) => item !== ""); // Filtra tipos vacíos si los hubiera
+
+  const productTags = body.data.productTags.edges.map((edge: any) => edge.node);
+
   const allVendors = body.data.products.edges.map(
     (edge: any) => edge.node.vendor,
   );
   const uniqueVendors = [...new Set(allVendors)];
+
   const allPrices = body.data.products.edges.map((edge: any) =>
     parseFloat(edge.node.priceRange.maxVariantPrice.amount),
   );
@@ -62,12 +65,10 @@ export default async function SearchPage({
 
   const initialFilters = {
     brands: uniqueVendors,
-    categories: categories,
-    types: tags,
+    categories: productTags,
+    types: productTypes,
     priceRange: priceRange,
   };
-
-  console.log(initialFilters);
 
   return (
     <div className="flex gap-6">

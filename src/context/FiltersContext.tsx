@@ -14,7 +14,6 @@ interface FiltersContextType {
   setAvailableFilters: (filters: AvailableFilters) => void;
 }
 
-// Valores por defecto actualizados
 const defaultFilters: AvailableFilters = {
   brands: [],
   categories: [],
@@ -38,7 +37,6 @@ export function FiltersProvider({ children }: { children: ReactNode }) {
   );
 }
 
-// El hook para consumir el contexto
 export function useFilters() {
   return useContext(FiltersContext);
 }
