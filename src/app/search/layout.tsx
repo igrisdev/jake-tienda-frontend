@@ -51,8 +51,6 @@ export default function SearchLayout({
     <FiltersProvider>
       <div className="mx-auto flex max-w-7xl flex-col gap-8 px-4 pt-6 pb-4 text-black md:flex-row">
         <div className="order-first flex-none md:w-max">
-          {/* <Collections /> */}
-          {/* <Brands /> */}
           <FiltersSidebar />
         </div>
         <div className="order-last min-h-screen w-full md:order-none">
