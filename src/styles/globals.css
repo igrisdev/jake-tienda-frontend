@@ -14,6 +14,7 @@
 
 @theme {
   --max-width-8xl: 1920px;
+  --max-width-9xl: 1620px;
 }
 
 /* @media (prefers-color-scheme: dark) {

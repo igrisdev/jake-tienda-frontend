@@ -4,7 +4,6 @@ import { useState, useEffect, ReactNode } from "react";
 import { useFilters } from "@/context/FiltersContext";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import { useProductSearch } from "@/context/ProductSearchContext";
 
 const AccordionIcon = ({ isOpen }: { isOpen: boolean }) => (
   <svg
@@ -64,13 +63,6 @@ const ActiveFilterPill = ({
 
 export function FiltersSidebar() {
   const { availableFilters } = useFilters();
-
-  // const { products, setProducts, pageInfo, setPageInfo } = useProductSearch();
-
-  // console.log("**********************************************************");
-  // console.log(products);
-  // console.log("**********************************************************");
-
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -100,58 +92,42 @@ export function FiltersSidebar() {
     setOpenSections((prev) => ({ ...prev, [section]: !prev[section] }));
   };
 
+
   const handleCheckboxChange = (
     key: "brands" | "categories" | "types",
     value: string,
   ) => {
-    const setters = {
-      brands: setSelectedBrands,
-      categories: setSelectedCategories,
-      types: setSelectedTypes,
-    };
-    setters[key]((prev) =>
-      prev.includes(value)
-        ? prev.filter((item) => item !== value)
-        : [...prev, value],
-    );
+    const params = new URLSearchParams(searchParams.toString());
+    const paramKey = key === "categories" ? "category" : key;
+    const currentValues = params.getAll(paramKey);
+
+    if (currentValues.includes(value)) {
+      // Si ya está, lo eliminamos (desmarcar)
+      const newValues = currentValues.filter((v) => v !== value);
+      params.delete(paramKey);
+      newValues.forEach((v) => params.append(paramKey, v));
+    } else {
+      // Si no está, lo añadimos (marcar)
+      params.append(paramKey, value);
+    }
+
+    // Siempre reseteamos la paginación al cambiar un filtro
+    params.delete("page");
+    params.delete("after");
+    params.delete("before");
+
+    router.push(`${pathname}?${params.toString()}`);
   };
 
   const handleRemoveFilter = (
     key: "brands" | "categories" | "types",
     value: string,
   ) => {
-    const setters = {
-      brands: setSelectedBrands,
-      categories: setSelectedCategories,
-      types: setSelectedTypes,
-    };
-    setters[key]((prev) => prev.filter((item) => item !== value));
-  };
-
-  const handleApplyFilters = () => {
-    const params = new URLSearchParams(searchParams.toString());
-    params.delete("brands");
-    params.delete("category");
-    params.delete("types");
-    selectedBrands.forEach((brand) => params.append("brands", brand));
-    selectedCategories.forEach((cat) => params.append("category", cat));
-    selectedTypes.forEach((type) => params.append("types", type));
-    if (minPrice) params.set("price_min", minPrice);
-    else params.delete("price_min");
-    if (maxPrice) params.set("price_max", maxPrice);
-    else params.delete("price_max");
-    params.delete("page");
-    params.delete("after");
-    params.delete("before");
-    router.push(`${pathname}?${params.toString()}`);
+    // La lógica es idéntica a desmarcar un checkbox
+    handleCheckboxChange(key, value);
   };
 
   const handleClearFilters = () => {
-    setSelectedBrands([]);
-    setSelectedCategories([]);
-    setSelectedTypes([]);
-    setMinPrice("");
-    setMaxPrice("");
     const params = new URLSearchParams(searchParams.toString());
     params.delete("brands");
     params.delete("category");
@@ -165,18 +141,19 @@ export function FiltersSidebar() {
   };
 
   const hasActiveFilters =
-    selectedBrands.length > 0 ||
-    selectedCategories.length > 0 ||
-    selectedTypes.length > 0 ||
-    minPrice ||
-    maxPrice;
+    searchParams.has("brands") ||
+    searchParams.has("category") ||
+    searchParams.has("types") ||
+    searchParams.has("price_min") ||
+    searchParams.has("price_max");
 
   return (
-    <div className="flex w-70 flex-col gap-4">
+    <div className="flex w-60 flex-col gap-4">
+      {/* --- CABECERA (SIN CAMBIOS) --- */}
       <div className="flex items-center justify-between border-b border-gray-200 pb-4">
         <h2 className="flex items-center gap-2 text-lg font-bold text-gray-800">
           <svg
-            xmlns="http://www.w.org/2000/svg"
+            xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
             strokeWidth={1.5}
@@ -201,23 +178,24 @@ export function FiltersSidebar() {
         )}
       </div>
 
+      {/* --- FILTROS ACTIVOS (PÍLDORAS, SIN CAMBIOS) --- */}
       {hasActiveFilters && (
         <div className="flex flex-wrap gap-2">
-          {selectedBrands.map((brand) => (
+          {searchParams.getAll("brands").map((brand) => (
             <ActiveFilterPill
               key={brand}
               label={brand}
               onRemove={() => handleRemoveFilter("brands", brand)}
             />
           ))}
-          {selectedCategories.map((cat) => (
+          {searchParams.getAll("category").map((cat) => (
             <ActiveFilterPill
               key={cat}
               label={cat}
               onRemove={() => handleRemoveFilter("categories", cat)}
             />
           ))}
-          {selectedTypes.map((type) => (
+          {searchParams.getAll("types").map((type) => (
             <ActiveFilterPill
               key={type}
               label={type}
@@ -227,15 +205,9 @@ export function FiltersSidebar() {
         </div>
       )}
 
-      <div className="border-b border-gray-200 pb-4">
-        <button
-          onClick={handleApplyFilters}
-          className="w-full rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-950"
-        >
-          Aplicar Filtros
-        </button>
-      </div>
+      {/* --- BOTÓN DE APLICAR ELIMINADO --- */}
 
+      {/* --- ACORDEÓN DE FILTROS --- */}
       <div className="space-y-0">
         <FilterSection
           title="Categorías"
@@ -314,30 +286,6 @@ export function FiltersSidebar() {
             ))}
           </ul>
         </FilterSection>
-
-        {/* <FilterSection
-          title="Precio"
-          isOpen={openSections.price}
-          onToggle={() => toggleSection("price")}
-        >
-          <div className="flex items-center gap-2">
-            <input
-              type="number"
-              placeholder={`Min`}
-              value={minPrice}
-              onChange={(e) => setMinPrice(e.target.value)}
-              className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-            />
-            <span>-</span>
-            <input
-              type="number"
-              placeholder={`Max`}
-              value={maxPrice}
-              onChange={(e) => setMaxPrice(e.target.value)}
-              className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-            />
-          </div>
-        </FilterSection> */}
       </div>
     </div>
   );

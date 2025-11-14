@@ -6,6 +6,7 @@ import Footer from "@/components/layout/footer";
 import { CartProvider } from "@/components/cart/cart-context";
 import { cookies } from "next/headers";
 import { getCart } from "@/lib/shopify";
+import { ProductSearchProvider } from "@/context/ProductSearchContext";
 
 const poppins = Poppins({
   weight: ["300", "400", "500", "600", "700"],
@@ -132,14 +133,16 @@ export default async function RootLayout({
       </head>
 
       <CartProvider cartPromise={cart}>
-        <body className={`${poppins.variable} font-poppins antialiased`}>
-          <Navbar />
+        <ProductSearchProvider>
+          <body className={`${poppins.variable} font-poppins antialiased`}>
+            <Navbar />
 
-          <main className="max-w-8xl relative mx-auto mt-[117px] h-full min-h-[calc(100vh-117px)] w-full sm:mt-[100px] sm:h-full sm:min-h-[calc(100vh-100px)]">
-            {children}
-          </main>
-          <Footer />
-        </body>
+            <main className="max-w-8xl relative mx-auto mt-[117px] h-full min-h-[calc(100vh-117px)] w-full sm:mt-[100px] sm:h-full sm:min-h-[calc(100vh-100px)]">
+              {children}
+            </main>
+            <Footer />
+          </body>
+        </ProductSearchProvider>
       </CartProvider>
     </html>
   );
