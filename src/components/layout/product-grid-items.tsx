@@ -48,6 +48,7 @@ export const ProductCard = ({ product }: { product: Product }) => {
             src={product.featuredImage?.url ?? "/not-found.png"}
             alt={product.featuredImage?.altText || product.title}
             className="h-[300px] w-[300px] object-contain"
+            referrerPolicy="no-referrer"
           />
         </header>
         <main>

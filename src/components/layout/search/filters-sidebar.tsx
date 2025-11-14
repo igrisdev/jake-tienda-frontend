@@ -315,7 +315,7 @@ export function FiltersSidebar() {
           </ul>
         </FilterSection>
 
-        <FilterSection
+        {/* <FilterSection
           title="Precio"
           isOpen={openSections.price}
           onToggle={() => toggleSection("price")}
@@ -337,7 +337,7 @@ export function FiltersSidebar() {
               className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
             />
           </div>
-        </FilterSection>
+        </FilterSection> */}
       </div>
     </div>
   );

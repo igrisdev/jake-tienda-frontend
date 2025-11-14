@@ -1,6 +1,6 @@
 "use client";
 
-import Image, { type StaticImageData } from "next/image";
+import { StaticImageData } from "next/image";
 import Link from "next/link";
 
 type Props = {
@@ -65,9 +65,10 @@ export default function BestProductPoster({
             className="object-contain drop-shadow-[0_20px_40px_rgba(0,0,0,0.35)] transition-transform duration-300 group-hover:scale-[1.02]"
           /> */}
           <img
-            src={data.product.image?.url}
+            src={data.product.image?.url ?? "/not-found.png"}
             alt={data.product.title}
             className="object-contain drop-shadow-[0_20px_40px_rgba(0,0,0,0.35)] transition-transform duration-300 group-hover:scale-[1.02]"
+            referrerPolicy="no-referrer"
           />
         </div>
 
