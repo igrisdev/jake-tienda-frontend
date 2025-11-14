@@ -238,32 +238,6 @@ export function FiltersSidebar() {
 
       <div className="space-y-0">
         <FilterSection
-          title="Marca"
-          isOpen={openSections.brands}
-          onToggle={() => toggleSection("brands")}
-        >
-          <ul className="scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-gray-400 max-h-48 space-y-2 overflow-y-auto pr-2">
-            {availableFilters.brands.sort().map((brand) => (
-              <li key={brand} className="flex items-center">
-                <input
-                  type="checkbox"
-                  id={`brand-${brand}`}
-                  onChange={() => handleCheckboxChange("brands", brand)}
-                  checked={selectedBrands.includes(brand)}
-                  className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                />
-                <label
-                  htmlFor={`brand-${brand}`}
-                  className="ml-3 cursor-pointer text-sm text-gray-700"
-                >
-                  {brand}
-                </label>
-              </li>
-            ))}
-          </ul>
-        </FilterSection>
-
-        <FilterSection
           title="Categorías"
           isOpen={openSections.types}
           onToggle={() => toggleSection("types")}
@@ -283,6 +257,32 @@ export function FiltersSidebar() {
                   className="ml-3 cursor-pointer text-sm text-gray-700"
                 >
                   {type}
+                </label>
+              </li>
+            ))}
+          </ul>
+        </FilterSection>
+
+        <FilterSection
+          title="Marca"
+          isOpen={openSections.brands}
+          onToggle={() => toggleSection("brands")}
+        >
+          <ul className="scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-gray-400 max-h-48 space-y-2 overflow-y-auto pr-2">
+            {availableFilters.brands.sort().map((brand) => (
+              <li key={brand} className="flex items-center">
+                <input
+                  type="checkbox"
+                  id={`brand-${brand}`}
+                  onChange={() => handleCheckboxChange("brands", brand)}
+                  checked={selectedBrands.includes(brand)}
+                  className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                />
+                <label
+                  htmlFor={`brand-${brand}`}
+                  className="ml-3 cursor-pointer text-sm text-gray-700"
+                >
+                  {brand}
                 </label>
               </li>
             ))}

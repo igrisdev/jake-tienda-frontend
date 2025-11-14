@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { useRef, useEffect } from "react";
 import { useSearchProducts } from "@/hooks/use-search-products";
 import { RefreshCw, Search } from "lucide-react";

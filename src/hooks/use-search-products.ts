@@ -47,7 +47,8 @@ export const useSearchProducts = () => {
         `/api/shopify/search?q=${encodeURIComponent(debouncedSearch)}`,
       );
       const data = await res.json();
-      setProductsSearch(data);
+
+      setProductsSearch(data.products);
     } catch (err) {
       setProductsSearch([]);
     } finally {
