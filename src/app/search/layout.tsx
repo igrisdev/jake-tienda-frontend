@@ -1,8 +1,9 @@
-import type { Metadata } from "next";
 import FilterList from "@/components/layout/search/filter";
 import { sorting } from "@/lib/constants";
 import { FiltersProvider } from "@/context/FiltersContext";
 import { FiltersSidebar } from "@/components/layout/search/filters-sidebar";
+import { ProductSearchProvider } from "@/context/ProductSearchContext";
+import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Buscar productos | Jake Tienda Electrónica",
@@ -49,17 +50,19 @@ export default function SearchLayout({
 }) {
   return (
     <FiltersProvider>
-      <div className="mx-auto flex max-w-7xl flex-col gap-8 px-4 pt-6 pb-4 text-black md:flex-row">
-        <div className="order-first flex-none md:w-max">
-          <FiltersSidebar />
+      <ProductSearchProvider>
+        <div className="mx-auto flex max-w-7xl flex-col gap-8 px-4 pt-6 pb-4 text-black md:flex-row">
+          <div className="order-first flex-none md:w-max">
+            <FiltersSidebar />
+          </div>
+          <div className="order-last min-h-screen w-full md:order-none">
+            {children}
+          </div>
+          <div className="order-none flex-none md:order-last md:w-max">
+            <FilterList list={sorting} title="Ordenar por" />
+          </div>
         </div>
-        <div className="order-last min-h-screen w-full md:order-none">
-          {children}
-        </div>
-        <div className="order-none flex-none md:order-last md:w-max">
-          <FilterList list={sorting} title="Ordenar por" />
-        </div>
-      </div>
+      </ProductSearchProvider>
     </FiltersProvider>
   );
 }

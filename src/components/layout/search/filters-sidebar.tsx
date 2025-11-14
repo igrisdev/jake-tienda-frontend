@@ -4,6 +4,7 @@ import { useState, useEffect, ReactNode } from "react";
 import { useFilters } from "@/context/FiltersContext";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import { XMarkIcon } from "@heroicons/react/24/outline";
+import { useProductSearch } from "@/context/ProductSearchContext";
 
 const AccordionIcon = ({ isOpen }: { isOpen: boolean }) => (
   <svg
@@ -63,6 +64,13 @@ const ActiveFilterPill = ({
 
 export function FiltersSidebar() {
   const { availableFilters } = useFilters();
+
+  // const { products, setProducts, pageInfo, setPageInfo } = useProductSearch();
+
+  // console.log("**********************************************************");
+  // console.log(products);
+  // console.log("**********************************************************");
+
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();

@@ -61,6 +61,7 @@ export default async function ProductPage({
   if (!product) return notFound();
 
   return (
+    // <ProductSearchProvider>
     <ProductProvider>
       <div className="mx-auto max-w-screen-2xl px-4 pt-2 pb-4">
         <div className="flex flex-col rounded-lg border border-neutral-200 bg-white p-8 md:p-12 lg:flex-row lg:gap-8">
@@ -90,5 +91,6 @@ export default async function ProductPage({
         <RelatedProducts id={product.id} />
       </div>
     </ProductProvider>
+    // </ProductSearchProvider>
   );
 }

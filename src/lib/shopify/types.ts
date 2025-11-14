@@ -261,3 +261,10 @@ export type ShopifyPagesOperation = {
     pages: Connection<Page>;
   };
 };
+
+export type PageInfo = {
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+  startCursor: string | null;
+  endCursor: string | null;
+};
