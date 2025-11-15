@@ -13,7 +13,7 @@ import { Suspense } from "react";
 import { SearchProducts } from "./search-products";
 
 export const Navbar = async () => {
-  const menuResponse = await getMenu("main-menu");
+  const menuResponse = await getMenu("main-menu-copia");
 
   const menu = [
     ...menuResponse,
@@ -115,28 +115,62 @@ interface DropdownMenuProps {
   drop: IDropDownMenu[];
 }
 
-const DropdownMenu = ({ name, drop }: DropdownMenuProps) => (
-  <li className="group">
-    <span className="flex cursor-default items-center gap-1 pr-6 group-hover:text-blue-800">
-      {name} <ChevronDown size={14} />
-    </span>
-    <div className="animate-fade-up animate-once animate-duration-100 animate-ease-out absolute top-full right-0 left-0 z-20 hidden w-full border-t border-b border-gray-300 bg-blue-50 pb-8 shadow-2xl group-hover:block">
-      <h2 className="border-b border-gray-300 px-10 py-8 text-2xl font-medium md:px-20 lg:px-40">
-        {name}
-      </h2>
+const DropdownMenu = ({ name, drop }: DropdownMenuProps) => {
+  const hasSubmenus = drop.some(
+    (item) => item.children && item.children.length > 0,
+  );
 
-      <ul className="flex flex-wrap gap-4 px-10 py-4 md:px-20 lg:px-40">
-        {drop.map((item) => (
-          <li key={item.title}>
-            <Link
-              href={item.path + "?title=" + name + "&collection=" + item.title}
-              className="block w-full px-5 py-2 hover:bg-blue-200"
-            >
-              {item.title}
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </div>
-  </li>
-);
+  return (
+    <li className="group">
+      <span className="flex cursor-default items-center gap-1 pr-6 group-hover:text-blue-800">
+        {name} <ChevronDown size={14} />
+      </span>
+      <div className="animate-fade-up animate-once animate-duration-100 animate-ease-out absolute top-full right-0 left-0 z-20 hidden w-full border-t border-b border-gray-300 bg-blue-50 pb-8 shadow-2xl group-hover:block">
+        <h2 className="border-b border-gray-300 px-10 py-8 text-2xl font-medium md:px-20 lg:px-40">
+          {name}
+        </h2>
+
+        <ul
+          className={`flex flex-wrap px-10 py-4 md:px-20 lg:px-40 ${hasSubmenus ? "gap-20" : "gap-2"}`}
+        >
+          {drop.map((item) => (
+            <li key={item.title} className="group/sub-group relative">
+              {!item.children || item.children.length === 0 ? (
+                <Link
+                  href={
+                    item.path + "?title=" + name + "&collection=" + item.title
+                  }
+                  className="block w-full rounded-md px-5 py-2 hover:bg-blue-200"
+                >
+                  {item.title}
+                </Link>
+              ) : (
+                <div className="">
+                  <h3 className="mb-2 text-lg font-medium">{item.title}</h3>
+                  <ul className="flex flex-col gap-0">
+                    {item.children.map((subItem) => (
+                      <li key={subItem.title}>
+                        <Link
+                          href={
+                            item.path +
+                            "?title=" +
+                            name +
+                            "&collection=" +
+                            item.title
+                          }
+                          className="block w-full py-2 hover:underline"
+                        >
+                          {subItem.title}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </li>
+  );
+};

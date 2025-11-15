@@ -12,7 +12,7 @@ export const Header = () => {
   });
 
   return (
-    <section className="bg-gradient-to-r from-blue-800 to-blue-500">
+    <section className="bg-linear-to-r from-blue-800 to-blue-500">
       <div className="mx-auto w-full max-w-7xl rounded-xs p-4 px-4 pt-16 pb-3">
         <span className="h-4 text-sm font-medium text-white sm:text-lg">
           {name.length > 0 ? name : "Sin Categoría"}
