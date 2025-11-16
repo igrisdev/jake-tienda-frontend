@@ -13,11 +13,11 @@ export const Header = () => {
 
   return (
     <section className="bg-linear-to-r from-blue-800 to-blue-500">
-      <div className="mx-auto w-full max-w-7xl rounded-xs p-4 px-4 pt-16 pb-3">
-        <span className="h-4 text-sm font-medium text-white sm:text-lg">
+      <div className="mx-auto w-full max-w-7xl rounded-xs px-4 py-10 text-center">
+        <span className="text-sm font-medium text-white sm:text-lg block mb-2">
           {name.length > 0 ? name : "Sin Categoría"}
         </span>
-        <h1 className="h-12 text-2xl font-medium text-white sm:text-5xl">
+        <h1 className="text-2xl font-bold text-white sm:text-6xl uppercase">
           {collection.length > 0 ? collection : "Sin Colección"}
         </h1>
       </div>

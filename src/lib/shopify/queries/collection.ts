@@ -50,25 +50,6 @@ export const getCollectionProductsQuery = /* GraphQL */ `
   ${productFragment}
 `;
 
-// export const getCollectionProductsQuery = /* GraphQL */ `
-//   query getCollectionProducts(
-//     $handle: String!
-//     $sortKey: ProductCollectionSortKeys
-//     $reverse: Boolean
-//   ) {
-//     collection(handle: $handle) {
-//       products(sortKey: $sortKey, reverse: $reverse, first: 100) {
-//         edges {
-//           node {
-//             ...product
-//           }
-//         }
-//       }
-//     }
-//   }
-//   ${productFragment}
-// `;
-
 export const getCollectionsByCategoryAndBrandQuery = /* GraphQL */ `
   query getMenu($handle: String!) {
     menu(handle: $handle) {
@@ -86,6 +67,20 @@ export const getCollectionsByCategoryAndBrandQuery = /* GraphQL */ `
               image {
                 url
                 altText
+              }
+            }
+          }
+          items {
+            id
+            title
+            url
+            resource {
+              ... on Collection {
+                handle
+                image {
+                  url
+                  altText
+                }
               }
             }
           }

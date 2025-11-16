@@ -185,37 +185,32 @@ export async function getMenu(handle: string): Promise<Menu[]> {
     variables: { handle },
   });
 
-  function normalizeItem(item: {
-    title: string;
-    url: string;
-    items?: any[];
-  }): Menu {
+  function normalizeMenuItem(item: any): Menu {
+    let path = item.url.replace(domain, "").replace("/pages", "");
+
+    if (path === "/collections") {
+      path = "/search";
+    } else {
+      path = path.replace("/collections", "/collection");
+    }
+
     return {
       title: item.title,
-      path: item.url
-        .replace(domain, "")
-        .replace("/collections", "/search")
-        .replace("/pages", ""),
-      children: item.items?.map(normalizeSubItem) || [],
+      path: path,
+      children: item.items?.map(normalizeMenuItem) || [],
     };
   }
 
-  function normalizeSubItem(item: {
-    title: string;
-    url: string;
-    items?: any[];
-  }): Menu {
-    return {
-      title: item.title,
-      path: item.url
-        .replace(domain, "")
-        .replace("/collections", "/collection")
-        .replace("/pages", ""),
-      children: item.items?.map(normalizeItem) || [],
-    };
-  }
+  const normalizedMenu =
+    res.body?.data?.menu?.items.map(normalizeMenuItem) || [];
 
-  return res.body?.data?.menu?.items.map(normalizeItem) || [];
+  normalizedMenu.forEach((item) => {
+    if (item.title === "Marcas" || item.title === "Categorías") {
+      item.path = "#";
+    }
+  });
+
+  return normalizedMenu;
 }
 
 interface ShopifyMenuItem {
@@ -271,6 +266,81 @@ export async function getCollectionCategoriesAndBrands(
       getMenuItems(res, "Categorías") || getMenuItems(res, "Categorias"),
     brands: getMenuItems(res, "Marcas"),
   };
+}
+
+interface SubCategoryItem {
+  id: string;
+  title: string;
+  path: string;
+  url: string | null;
+  children: SubCategoryItem[];
+}
+
+interface ParentCategory {
+  id: string;
+  title: string;
+  children: SubCategoryItem[];
+}
+
+interface ShopifyMenuItem {
+  id: string;
+  title: string;
+  url: string;
+  resource?: {
+    handle: string;
+    image?: { url: string; altText: string | null };
+  };
+  items?: ShopifyMenuItem[];
+}
+
+export async function getSubcategories(
+  handle: string, // ej. "main-menu"
+  targetHandle: string, // ej. "alphatheta"
+): Promise<ParentCategory | null> {
+  const res = await shopifyFetch<ShopifyMenuOperation>({
+    query: getCollectionsByCategoryAndBrandQuery,
+    tags: [TAGS.collections],
+    variables: { handle },
+  });
+
+  const menuItems = (res.body.data.menu?.items as ShopifyMenuItem[]) || [];
+
+  const categoriesMenu = menuItems.find((item) => item.title === "Categorías");
+
+  if (!categoriesMenu || !categoriesMenu.items) {
+    return null;
+  }
+
+  const targetItem = categoriesMenu.items.find(
+    (item) => item.resource?.handle === targetHandle,
+  );
+
+  if (!targetItem) {
+    return null;
+  }
+
+  function normalizeChildItem(item: ShopifyMenuItem): SubCategoryItem {
+    const path = item.url
+      .replace(domain, "")
+      .replace("/pages", "")
+      .replace("/collections", "/collection");
+
+    return {
+      id: item.id,
+      title: item.title,
+      path: path,
+      url: item.resource?.image?.url ?? null,
+      children: item.items?.map(normalizeChildItem) || [],
+    };
+  }
+
+  const finalResult: ParentCategory = {
+    id: targetItem.id,
+    title: targetItem.title,
+    children: targetItem.items?.map(normalizeChildItem) || [],
+  };
+
+  return finalResult;
 }
 
 function reshapeCollection(

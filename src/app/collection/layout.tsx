@@ -8,7 +8,7 @@ export default function SearchLayout({
   return (
     <>
       <Header />
-      <div className="mx-auto flex max-w-7xl flex-col gap-8 px-4 pt-6 pb-4 text-black md:flex-row">
+      <div className="mx-auto flex max-w-9xl flex-col gap-8 px-4 pt-6 pb-4 text-black md:flex-row">
         {children}
       </div>
     </>

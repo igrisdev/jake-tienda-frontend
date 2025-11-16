@@ -1,3 +1,4 @@
+import Subcategories from "@/components/collection/subcategories";
 import { Pagination } from "@/components/common/pagination";
 import Grid from "@/components/grid";
 import ProductGridItems from "@/components/layout/product-grid-items";
@@ -15,7 +16,7 @@ function slugToTitle(slug: string) {
 export async function generateMetadata(props: {
   params: Promise<{ collection: string }>;
 }): Promise<Metadata> {
-  const { collection } = await props.params; // 👈 await aquí
+  const { collection } = await props.params;
 
   const titleFromSlug = slugToTitle(collection);
 
@@ -98,6 +99,8 @@ export default async function CategoryPage(props: {
         <p className="py-3 text-lg">{`No se han encontrado productos en esta colección`}</p>
       ) : (
         <>
+          {title === "Categoría" && <Subcategories title={collection} />}
+
           <Grid className="grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
             <ProductGridItems products={products} />
           </Grid>

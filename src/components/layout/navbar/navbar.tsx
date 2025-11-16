@@ -1,5 +1,4 @@
 import Link from "next/link";
-// import Image from "next/image";
 
 import Logo from "@/assets/logo/image.png";
 import { ChevronDown } from "lucide-react";
@@ -13,7 +12,7 @@ import { Suspense } from "react";
 import { SearchProducts } from "./search-products";
 
 export const Navbar = async () => {
-  const menuResponse = await getMenu("main-menu-copia");
+  const menuResponse = await getMenu("main-menu");
 
   const menu = [
     ...menuResponse,
@@ -126,12 +125,12 @@ const DropdownMenu = ({ name, drop }: DropdownMenuProps) => {
         {name} <ChevronDown size={14} />
       </span>
       <div className="animate-fade-up animate-once animate-duration-100 animate-ease-out absolute top-full right-0 left-0 z-20 hidden w-full border-t border-b border-gray-300 bg-blue-50 pb-8 shadow-2xl group-hover:block">
-        <h2 className="border-b border-gray-300 px-10 py-8 text-2xl font-medium md:px-20 lg:px-40">
+        <h2 className="border-b border-gray-300 px-10 py-8 text-center text-4xl font-bold uppercase md:px-20 lg:px-40">
           {name}
         </h2>
 
         <ul
-          className={`flex flex-wrap px-10 py-4 md:px-20 lg:px-40 ${hasSubmenus ? "gap-20" : "gap-2"}`}
+          className={`flex flex-wrap px-10 py-4 md:px-20 lg:px-40 ${hasSubmenus ? "gap-x-16 gap-y-4" : "gap-2"}`}
         >
           {drop.map((item) => (
             <li key={item.title} className="group/sub-group relative">
@@ -146,17 +145,28 @@ const DropdownMenu = ({ name, drop }: DropdownMenuProps) => {
                 </Link>
               ) : (
                 <div className="">
-                  <h3 className="mb-2 text-lg font-medium">{item.title}</h3>
+                  <h3 className="mb-2 text-lg font-semibold uppercase hover:underline">
+                    <Link
+                      href={
+                        item.path +
+                        "?title=Categoría" +
+                        "&collection=" +
+                        item.title
+                      }
+                    >
+                      {item.title}
+                    </Link>
+                  </h3>
+
                   <ul className="flex flex-col gap-0">
                     {item.children.map((subItem) => (
                       <li key={subItem.title}>
                         <Link
                           href={
-                            item.path +
-                            "?title=" +
-                            name +
+                            subItem.path +
+                            "?title=Subcategoría" +
                             "&collection=" +
-                            item.title
+                            subItem.title
                           }
                           className="block w-full py-2 hover:underline"
                         >

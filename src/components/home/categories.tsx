@@ -1,5 +1,4 @@
 import Link from "next/link";
-// import Image from "next/image";
 
 import { ICategoryCart } from "@/types/category";
 import { getCollectionCategoriesAndBrands } from "@/lib/shopify";

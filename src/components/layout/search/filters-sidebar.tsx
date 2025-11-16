@@ -92,7 +92,6 @@ export function FiltersSidebar() {
     setOpenSections((prev) => ({ ...prev, [section]: !prev[section] }));
   };
 
-
   const handleCheckboxChange = (
     key: "brands" | "categories" | "types",
     value: string,
@@ -107,7 +106,6 @@ export function FiltersSidebar() {
       params.delete(paramKey);
       newValues.forEach((v) => params.append(paramKey, v));
     } else {
-      // Si no está, lo añadimos (marcar)
       params.append(paramKey, value);
     }
 
@@ -123,7 +121,6 @@ export function FiltersSidebar() {
     key: "brands" | "categories" | "types",
     value: string,
   ) => {
-    // La lógica es idéntica a desmarcar un checkbox
     handleCheckboxChange(key, value);
   };
 
@@ -149,7 +146,6 @@ export function FiltersSidebar() {
 
   return (
     <div className="flex w-60 flex-col gap-4">
-      {/* --- CABECERA (SIN CAMBIOS) --- */}
       <div className="flex items-center justify-between border-b border-gray-200 pb-4">
         <h2 className="flex items-center gap-2 text-lg font-bold text-gray-800">
           <svg
@@ -178,7 +174,6 @@ export function FiltersSidebar() {
         )}
       </div>
 
-      {/* --- FILTROS ACTIVOS (PÍLDORAS, SIN CAMBIOS) --- */}
       {hasActiveFilters && (
         <div className="flex flex-wrap gap-2">
           {searchParams.getAll("brands").map((brand) => (
@@ -205,9 +200,6 @@ export function FiltersSidebar() {
         </div>
       )}
 
-      {/* --- BOTÓN DE APLICAR ELIMINADO --- */}
-
-      {/* --- ACORDEÓN DE FILTROS --- */}
       <div className="space-y-0">
         <FilterSection
           title="Categorías"
