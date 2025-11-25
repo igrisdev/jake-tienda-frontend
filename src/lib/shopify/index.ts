@@ -697,6 +697,10 @@ export async function getCollectionProducts({
     },
   });
 
+  const filters = extractFilters(res.body.data.collection.products.edges);
+  // console.log(res.body.data.collection.products.edges);
+  console.log(filters);
+
   if (!res.body.data.collection) {
     return { products: [], pageInfo: {} };
   }

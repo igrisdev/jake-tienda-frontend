@@ -2,6 +2,8 @@ import Subcategories from "@/components/collection/subcategories";
 import { Pagination } from "@/components/common/pagination";
 import Grid from "@/components/grid";
 import ProductGridItems from "@/components/layout/product-grid-items";
+import FilterList from "@/components/layout/search/filter";
+import { FiltersSidebar } from "@/components/layout/search/filters-sidebar";
 import { getCollectionProducts } from "@/lib/shopify";
 
 import type { Metadata } from "next";
@@ -101,9 +103,19 @@ export default async function CategoryPage(props: {
         <>
           {title === "Categoría" && <Subcategories title={collection} />}
 
-          <Grid className="grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-            <ProductGridItems products={products} />
-          </Grid>
+          <div className="flex flex-col gap-8 text-black md:flex-row">
+            {/* <div className="order-first hidden flex-none md:block md:w-max">
+              <FiltersSidebar />
+            </div> */}
+            <div className="order-last min-h-screen w-full md:order-0">
+              <Grid className="grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+                <ProductGridItems products={products} />
+              </Grid>
+            </div>
+            <div className="order-0 flex-none md:order-last md:w-max">
+              {/* <FilterList list={sorting} title="Ordenar por" /> */}
+            </div>
+          </div>
 
           <Pagination
             pageInfo={pageInfo}
@@ -119,4 +131,20 @@ export default async function CategoryPage(props: {
       )}
     </section>
   );
+}
+
+{
+  /* <FiltersProvider>
+      <div className="mx-auto flex max-w-9xl flex-col gap-8 px-4 pt-6 pb-4 text-black md:flex-row">
+        <div className="order-first flex-none hidden md:block md:w-max">
+          <FiltersSidebar />
+        </div>
+        <div className="order-last min-h-screen w-full md:order-0">
+          {children}
+        </div>
+        <div className="order-0 flex-none md:order-last md:w-max">
+          <FilterList list={sorting} title="Ordenar por" />
+        </div>
+      </div>
+    </FiltersProvider> */
 }

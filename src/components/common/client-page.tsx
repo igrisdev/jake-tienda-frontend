@@ -104,6 +104,7 @@ export function SearchClientPage({
           <Grid className="grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
             <ProductGridItems products={products} />
           </Grid>
+
           {pageInfo && (
             <LoadMore loadMoreProducts={loadMoreProducts} pageInfo={pageInfo} />
           )}

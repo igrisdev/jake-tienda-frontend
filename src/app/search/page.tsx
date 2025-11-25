@@ -38,13 +38,17 @@ export default async function SearchPage({
   const productTypes = body.data.productTypes.edges
     .map((edge: any) => edge.node)
     .filter(Boolean);
+
   const productTags = body.data.productTags.edges.map((edge: any) => edge.node);
+
   const uniqueVendors = [
     ...new Set(body.data.products.edges.map((edge: any) => edge.node.vendor)),
   ];
+
   const allPrices = body.data.products.edges.map((edge: any) =>
     parseFloat(edge.node.priceRange.maxVariantPrice.amount),
   );
+
   const priceRange = {
     min: allPrices.length ? Math.min(...allPrices) : 0,
     max: allPrices.length ? Math.max(...allPrices) : 0,

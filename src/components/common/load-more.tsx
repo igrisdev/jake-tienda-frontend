@@ -30,7 +30,6 @@ export function LoadMore({ loadMoreProducts, pageInfo }: LoadMoreProps) {
     load();
   }, [inView, loading, pageInfo, loadMoreProducts]);
 
-  // Si no hay más páginas, no renderizamos nada
   if (!pageInfo.hasNextPage) {
     return null;
   }

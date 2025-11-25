@@ -1,8 +1,5 @@
 import Link from "next/link";
-import Grid from "../grid";
 import { Product } from "@/lib/shopify/types";
-import { GridTileImage } from "../grid/tile";
-// import Image from "next/image";
 import Price from "../price";
 
 export default function ProductGridItems({
@@ -47,7 +44,7 @@ export const ProductCard = ({ product }: { product: Product }) => {
           <img
             src={product.featuredImage?.url ?? "/not-found.png"}
             alt={product.featuredImage?.altText || product.title}
-            className="h-[300px] w-[300px] object-contain"
+            className="object-contain w-full h-full"
             referrerPolicy="no-referrer"
           />
         </header>
