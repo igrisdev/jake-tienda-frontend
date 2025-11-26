@@ -648,11 +648,11 @@ export async function getBestProductPoster() {
     id: node.id,
     product: product
       ? {
-          handle: product.handle,
-          title: product.title,
-          tags: product.tags,
-          image: product.featuredImage,
-        }
+        handle: product.handle,
+        title: product.title,
+        tags: product.tags,
+        image: product.featuredImage,
+      }
       : null,
   };
 }
@@ -713,8 +713,6 @@ export async function getCollectionProducts({
   }
 
   const filters = extractFilters(res.body.data.collection.products.edges);
-  // console.log(res.body.data.collection.products.edges);
-  console.log(filters);
 
   return {
     products: reshapeProducts(

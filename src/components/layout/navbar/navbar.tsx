@@ -12,7 +12,7 @@ import { Suspense } from "react";
 import { SearchProducts } from "./search-products";
 
 export const Navbar = async () => {
-  const menuResponse = await getMenu("main-menu");
+  const menuResponse = await getMenu("main-menu-copia");
 
   const menu = [
     ...menuResponse,

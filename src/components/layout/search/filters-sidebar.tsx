@@ -4,6 +4,7 @@ import { useState, useEffect, ReactNode } from "react";
 import { useFilters } from "@/context/FiltersContext";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import { XMarkIcon } from "@heroicons/react/24/outline";
+import { useGetParams } from "@/hooks/useGetParams";
 
 const AccordionIcon = ({ isOpen }: { isOpen: boolean }) => (
   <svg
@@ -78,6 +79,10 @@ export function FiltersSidebar() {
     types: true,
     categories: true,
     price: true,
+  });
+
+  const { params: whatCollection } = useGetParams({
+    name: "title",
   });
 
   useEffect(() => {
@@ -201,57 +206,76 @@ export function FiltersSidebar() {
       )}
 
       <div className="space-y-0">
-        <FilterSection
-          title="Categorías"
-          isOpen={openSections.types}
-          onToggle={() => toggleSection("types")}
-        >
-          <ul className="scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-gray-400 max-h-48 space-y-2 overflow-y-auto pr-2">
-            {availableFilters.types.sort().map((type) => (
-              <li key={type} className="flex items-center">
-                <input
-                  type="checkbox"
-                  id={`type-${type}`}
-                  onChange={() => handleCheckboxChange("types", type)}
-                  checked={selectedTypes.includes(type)}
-                  className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                />
-                <label
-                  htmlFor={`type-${type}`}
-                  className="ml-3 cursor-pointer text-sm text-gray-700"
-                >
-                  {type}
-                </label>
-              </li>
-            ))}
-          </ul>
-        </FilterSection>
+        {whatCollection != 'Categoría' && whatCollection != 'Subcategoría' && (
+          <FilterSection
+            title="Categorías"
+            isOpen={openSections.types}
+            onToggle={() => toggleSection("types")}
+          >
+            <ul className="scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-gray-400 max-h-48 space-y-2 overflow-y-auto pr-2">
+              {availableFilters.types.length < 1 && (
+                <li className="flex items-center text-xs">
+                  No hay categorías disponibles
+                </li>
+              )}
+              {availableFilters.types.map((type) => (
+                <li key={type} className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id={`type-${type}`}
+                    onChange={() => handleCheckboxChange("types", type)}
+                    checked={selectedTypes.includes(type)}
+                    className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                  />
+                  <label
+                    htmlFor={`type-${type}`}
+                    className="ml-3 cursor-pointer text-sm text-gray-700"
+                  >
+                    {type}
+                  </label>
+                </li>
+              ))}
+            </ul>
+          </FilterSection>
+        )}
 
-        <FilterSection
-          title="Marca"
-          isOpen={openSections.brands}
-          onToggle={() => toggleSection("brands")}
-        >
-          <ul className="scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-gray-400 max-h-48 space-y-2 overflow-y-auto pr-2">
-            {availableFilters.brands.sort().map((brand) => (
-              <li key={brand} className="flex items-center">
-                <input
-                  type="checkbox"
-                  id={`brand-${brand}`}
-                  onChange={() => handleCheckboxChange("brands", brand)}
-                  checked={selectedBrands.includes(brand)}
-                  className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                />
-                <label
-                  htmlFor={`brand-${brand}`}
-                  className="ml-3 cursor-pointer text-sm text-gray-700"
-                >
-                  {brand}
-                </label>
-              </li>
-            ))}
-          </ul>
-        </FilterSection>
+
+
+        {whatCollection != 'Marcas' && (
+          <FilterSection
+            title="Marca"
+            isOpen={openSections.brands}
+            onToggle={() => toggleSection("brands")}
+          >
+            <ul className="scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-gray-400 max-h-48 space-y-2 overflow-y-auto pr-2">
+
+              {availableFilters.brands.length < 1 && (
+                <li className="flex items-center text-xs">
+                  No hay marcas disponibles
+                </li>
+              )}
+              {availableFilters.brands.map((brand) => (
+                <li key={brand} className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id={`brand-${brand}`}
+                    onChange={() => handleCheckboxChange("brands", brand)}
+                    checked={selectedBrands.includes(brand)}
+                    className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                  />
+                  <label
+                    htmlFor={`brand-${brand}`}
+                    className="ml-3 cursor-pointer text-sm text-gray-700"
+                  >
+                    {brand}
+                  </label>
+                </li>
+              ))}
+            </ul>
+          </FilterSection>
+        )}
+
+
 
         <FilterSection
           title="Tipo de Producto"
@@ -259,7 +283,12 @@ export function FiltersSidebar() {
           onToggle={() => toggleSection("categories")}
         >
           <ul className="scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-gray-400 max-h-48 space-y-2 overflow-y-auto pr-2">
-            {availableFilters.categories.sort().map((category) => (
+            {availableFilters.categories.length < 1 && (
+              <li className="flex items-center text-xs">
+                No hay tipos de productos disponibles
+              </li>
+            )}
+            {availableFilters.categories.map((category) => (
               <li key={category} className="flex items-center">
                 <input
                   type="checkbox"

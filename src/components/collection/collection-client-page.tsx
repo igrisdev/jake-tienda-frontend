@@ -11,6 +11,7 @@ import { LoadMore } from "@/components/common/load-more";
 import { sorting, defaultSort } from "@/lib/constants";
 import type { PageInfo, Product } from "@/lib/shopify/types";
 import { MobileFilters } from "@/components/common/mobile-filters";
+import { useGetParams } from "@/hooks/useGetParams";
 
 type Props = {
   initialProducts: Product[];
@@ -25,7 +26,7 @@ export function CollectionClientPage({
 }: Props) {
   const { products, setProducts, pageInfo, setPageInfo } = useProductSearch();
   const searchParams = useSearchParams();
-  
+
   // Keep track of ALL loaded products for client-side filtering
   const [allLoadedProducts, setAllLoadedProducts] = useState<Product[]>(initialProducts);
 
@@ -45,14 +46,14 @@ export function CollectionClientPage({
 
     allLoadedProducts.forEach((product) => {
       if (!product) return;
-      
+
       if (product.vendor) brands.add(product.vendor);
       if (product.productType) types.add(product.productType);
-      
+
       if (product.tags) {
         product.tags.forEach((tag) => categories.add(tag));
       }
-      
+
       if (product.priceRange?.maxVariantPrice?.amount) {
         const price = parseFloat(product.priceRange.maxVariantPrice.amount);
         if (!isNaN(price)) prices.push(price);
@@ -133,7 +134,7 @@ export function CollectionClientPage({
 
       // Append new products to our local state of ALL products
       setAllLoadedProducts((prev) => [...prev, ...newProducts]);
-      
+
       // Update page info for next pagination
       setPageInfo(newPageInfo);
 
