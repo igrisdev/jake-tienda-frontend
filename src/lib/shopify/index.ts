@@ -683,6 +683,17 @@ export async function getCollectionProducts({
   after?: string;
   before?: string;
 }): Promise<{ products: Product[]; pageInfo: any }> {
+  if (collection === "all") {
+    return getProducts({
+      sortKey,
+      reverse,
+      first,
+      last,
+      after,
+      before,
+    });
+  }
+
   const res = await shopifyFetch<ShopifyCollectionProductsOperation>({
     query: getCollectionProductsQuery,
     tags: [TAGS.collections, TAGS.products],
@@ -697,13 +708,13 @@ export async function getCollectionProducts({
     },
   });
 
-  const filters = extractFilters(res.body.data.collection.products.edges);
-  // console.log(res.body.data.collection.products.edges);
-  console.log(filters);
-
   if (!res.body.data.collection) {
     return { products: [], pageInfo: {} };
   }
+
+  const filters = extractFilters(res.body.data.collection.products.edges);
+  // console.log(res.body.data.collection.products.edges);
+  console.log(filters);
 
   return {
     products: reshapeProducts(

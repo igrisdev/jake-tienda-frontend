@@ -35,6 +35,7 @@ export type Edge<T> = {
 
 export type Connection<T> = {
   edges: Array<Edge<T>>;
+  pageInfo: PageInfo;
 };
 
 export type ProductVariant = {
@@ -78,6 +79,8 @@ export type ShopifyProduct = {
   seo: SEO;
   tags: string[];
   updatedAt: string;
+  vendor: string;
+  productType: string;
 };
 
 export type Product = Omit<ShopifyProduct, "variants" | "images"> & {
@@ -124,6 +127,10 @@ export type ShopifyCollectionProductsOperation = {
     handle: string;
     reverse?: boolean;
     sortKey?: string;
+    first?: number;
+    last?: number;
+    after?: string;
+    before?: string;
   };
 };
 

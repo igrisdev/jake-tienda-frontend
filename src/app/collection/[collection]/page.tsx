@@ -1,10 +1,12 @@
 import Subcategories from "@/components/collection/subcategories";
 import { Pagination } from "@/components/common/pagination";
-import Grid from "@/components/grid";
-import ProductGridItems from "@/components/layout/product-grid-items";
 import FilterList from "@/components/layout/search/filter";
 import { FiltersSidebar } from "@/components/layout/search/filters-sidebar";
 import { getCollectionProducts } from "@/lib/shopify";
+import { sorting, defaultSort } from "@/lib/constants";
+import { CollectionClientPage } from "@/components/collection/collection-client-page";
+import { ProductSearchProvider } from "@/context/ProductSearchContext";
+import { FiltersProvider } from "@/context/FiltersContext";
 
 import type { Metadata } from "next";
 
@@ -72,6 +74,7 @@ export async function generateMetadata(props: {
   };
 }
 
+
 export default async function CategoryPage(props: {
   params: Promise<{ collection: string }>;
   searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -83,12 +86,15 @@ export default async function CategoryPage(props: {
     [key: string]: string;
   };
 
+  const { sortKey, reverse } =
+    sorting.find((item) => item.slug === sort) || defaultSort;
+
   const currentPage = parseInt(page || "1", 10);
 
   const { products, pageInfo } = await getCollectionProducts({
     collection,
-    sortKey: "PRICE",
-    reverse: false,
+    sortKey,
+    reverse,
     first: before ? undefined : 18,
     last: before ? 18 : undefined,
     after,
@@ -97,54 +103,24 @@ export default async function CategoryPage(props: {
 
   return (
     <section>
-      {products.length === 0 ? (
-        <p className="py-3 text-lg">{`No se han encontrado productos en esta colección`}</p>
-      ) : (
-        <>
-          {title === "Categoría" && <Subcategories title={collection} />}
+      {title === "Categoría" && <Subcategories title={collection} />}
 
+      <ProductSearchProvider>
+        <FiltersProvider>
           <div className="flex flex-col gap-8 text-black md:flex-row">
-            {/* <div className="order-first hidden flex-none md:block md:w-max">
+            <div className="order-first hidden flex-none md:block md:w-max">
               <FiltersSidebar />
-            </div> */}
-            <div className="order-last min-h-screen w-full md:order-0">
-              <Grid className="grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-                <ProductGridItems products={products} />
-              </Grid>
             </div>
-            <div className="order-0 flex-none md:order-last md:w-max">
-              {/* <FilterList list={sorting} title="Ordenar por" /> */}
+            <div className="order-last min-h-screen w-full md:order-0">
+              <CollectionClientPage
+                initialProducts={products}
+                initialPageInfo={pageInfo}
+                collection={collection}
+              />
             </div>
           </div>
-
-          <Pagination
-            pageInfo={pageInfo}
-            currentPage={currentPage}
-            searchValue={collection}
-            sort={sort ?? ""}
-            collection={{
-              title,
-              collection,
-            }}
-          />
-        </>
-      )}
+        </FiltersProvider>
+      </ProductSearchProvider>
     </section>
   );
-}
-
-{
-  /* <FiltersProvider>
-      <div className="mx-auto flex max-w-9xl flex-col gap-8 px-4 pt-6 pb-4 text-black md:flex-row">
-        <div className="order-first flex-none hidden md:block md:w-max">
-          <FiltersSidebar />
-        </div>
-        <div className="order-last min-h-screen w-full md:order-0">
-          {children}
-        </div>
-        <div className="order-0 flex-none md:order-last md:w-max">
-          <FilterList list={sorting} title="Ordenar por" />
-        </div>
-      </div>
-    </FiltersProvider> */
 }
