@@ -28,7 +28,8 @@ export function CollectionClientPage({
   const searchParams = useSearchParams();
 
   // Keep track of ALL loaded products for client-side filtering
-  const [allLoadedProducts, setAllLoadedProducts] = useState<Product[]>(initialProducts);
+  const [allLoadedProducts, setAllLoadedProducts] =
+    useState<Product[]>(initialProducts);
 
   // Initialize context on mount or when initial props change
   useEffect(() => {
@@ -76,25 +77,37 @@ export function CollectionClientPage({
     const selectedBrands = searchParams.getAll("brands");
     const selectedCategories = searchParams.getAll("category");
     const selectedTypes = searchParams.getAll("types");
-    const priceMin = searchParams.get("price_min") ? Number(searchParams.get("price_min")) : undefined;
-    const priceMax = searchParams.get("price_max") ? Number(searchParams.get("price_max")) : undefined;
+    const priceMin = searchParams.get("price_min")
+      ? Number(searchParams.get("price_min"))
+      : undefined;
+    const priceMax = searchParams.get("price_max")
+      ? Number(searchParams.get("price_max"))
+      : undefined;
 
     return allLoadedProducts.filter((product) => {
       if (!product) return false;
 
       // Filter by Brand
-      if (selectedBrands.length > 0 && !selectedBrands.includes(product.vendor)) {
+      if (
+        selectedBrands.length > 0 &&
+        !selectedBrands.includes(product.vendor)
+      ) {
         return false;
       }
 
       // Filter by Type
-      if (selectedTypes.length > 0 && !selectedTypes.includes(product.productType)) {
+      if (
+        selectedTypes.length > 0 &&
+        !selectedTypes.includes(product.productType)
+      ) {
         return false;
       }
 
       // Filter by Category (Tags)
       if (selectedCategories.length > 0) {
-        const hasCategory = product.tags?.some(tag => selectedCategories.includes(tag));
+        const hasCategory = product.tags?.some((tag) =>
+          selectedCategories.includes(tag),
+        );
         if (!hasCategory) return false;
       }
 
@@ -114,7 +127,6 @@ export function CollectionClientPage({
     setProducts(displayedProducts);
   }, [displayedProducts, setProducts]);
 
-
   const loadMoreProducts = useCallback(async () => {
     if (!pageInfo?.endCursor) return { products: [], pageInfo };
 
@@ -124,13 +136,14 @@ export function CollectionClientPage({
       sorting.find((item) => item.slug === sort) || defaultSort;
 
     try {
-      const { products: newProducts, pageInfo: newPageInfo } = await getCollectionProducts({
-        collection,
-        sortKey,
-        reverse,
-        after: pageInfo.endCursor,
-        first: 18,
-      });
+      const { products: newProducts, pageInfo: newPageInfo } =
+        await getCollectionProducts({
+          collection,
+          sortKey,
+          reverse,
+          after: pageInfo.endCursor,
+          first: 18,
+        });
 
       // Append new products to our local state of ALL products
       setAllLoadedProducts((prev) => [...prev, ...newProducts]);
@@ -140,7 +153,6 @@ export function CollectionClientPage({
 
       return { products: newProducts, pageInfo: newPageInfo };
     } catch (error) {
-      console.error("Error loading more products:", error);
       return { products: [], pageInfo };
     }
   }, [pageInfo, collection, searchParams, setPageInfo]);
@@ -149,7 +161,7 @@ export function CollectionClientPage({
     <>
       <FiltersUpdater initialFilters={availableFilters} />
 
-      <div className="mb-8 block md:hidden">
+      <div className="mb-8 md:hidden">
         <MobileFilters />
       </div>
 

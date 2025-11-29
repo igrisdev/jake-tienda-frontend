@@ -2,6 +2,7 @@ import FilterList from "@/components/layout/search/filter";
 import { sorting } from "@/lib/constants";
 import { FiltersProvider } from "@/context/FiltersContext";
 import { FiltersSidebar } from "@/components/layout/search/filters-sidebar";
+import { MobileFilters } from "@/components/common/mobile-filters";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -49,14 +50,15 @@ export default function SearchLayout({
 }) {
   return (
     <FiltersProvider>
-      <div className="mx-auto flex max-w-9xl flex-col gap-8 px-4 pt-6 pb-4 text-black md:flex-row">
-        <div className="order-first flex-none hidden md:block md:w-max sticky top-32 h-fit">
+      <div className="max-w-9xl mx-auto flex flex-col gap-8 pt-6 pb-4 text-black md:flex-row">
+        <div className="sticky top-32 order-first hidden h-fit flex-none md:block md:w-max">
           <FiltersSidebar />
         </div>
-        <div className="order-last min-h-screen w-full md:order-0">
+        <div className="order-last min-h-screen w-full px-4 md:order-0">
           {children}
         </div>
-        <div className="order-0 flex-none md:order-last md:w-max sticky top-32 h-fit">
+        <div className="order-0 flex h-fit flex-none flex-col gap-2 border-b border-gray-300 bg-white px-4 py-4 md:sticky md:top-32 md:z-20 md:order-last md:w-max">
+          <MobileFilters />
           <FilterList list={sorting} title="Ordenar por" />
         </div>
       </div>

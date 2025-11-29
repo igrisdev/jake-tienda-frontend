@@ -83,10 +83,6 @@ export function SearchClientPage({
     <>
       <FiltersUpdater initialFilters={initialFilters} />
 
-      <div className="mb-8">
-        <MobileFilters />
-      </div>
-
       {query && (
         <h2 className="mb-4 text-xl font-semibold">
           Resultados para: <span className="font-bold">{query}</span>
