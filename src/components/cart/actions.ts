@@ -89,7 +89,6 @@ export async function updateItemQuantity(
 
     revalidateTag(TAGS.cart);
   } catch (error) {
-    console.error(error);
     return "Error al actualizar el carrito";
   }
 }

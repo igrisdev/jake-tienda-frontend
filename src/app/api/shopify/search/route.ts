@@ -10,7 +10,6 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ products, filters });
   } catch (error) {
-    console.error("Error en la búsqueda de productos:", error);
     return new NextResponse("Server Error", { status: 500 });
   }
 }

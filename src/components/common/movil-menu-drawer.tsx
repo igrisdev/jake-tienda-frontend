@@ -48,7 +48,6 @@ export const MobileMenu = ({ routes }: { routes: Menu[] }) => {
     return <PackageSearch size={18} />;
   };
 
-  console.log(routes);
   return (
     <>
       <button
