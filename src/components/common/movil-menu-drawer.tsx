@@ -48,6 +48,7 @@ export const MobileMenu = ({ routes }: { routes: Menu[] }) => {
     return <PackageSearch size={18} />;
   };
 
+  console.log(routes);
   return (
     <>
       <button
@@ -120,23 +121,64 @@ export const MobileMenu = ({ routes }: { routes: Menu[] }) => {
                   }`}
                 >
                   <ul className="ml-9 max-h-72 overflow-auto border-l border-blue-100 pl-3">
-                    {route.children!.map((item) => (
-                      <li key={item.title}>
-                        <Link
-                          href={
-                            item.path +
-                            "?title=" +
-                            route.title +
-                            "&collection=" +
-                            item.title
-                          }
-                          className="block rounded-md px-2 py-2 text-sm hover:bg-blue-50"
-                          onClick={() => setOpen(false)}
-                        >
-                          {item.title}
-                        </Link>
-                      </li>
-                    ))}
+                    {route.children!.map((item) => {
+                      const hasChildren =
+                        Array.isArray(item.children) &&
+                        item.children.length > 0;
+
+                      if (hasChildren) {
+                        return (
+                          <li key={item.title}>
+                            <Link
+                              href={
+                                item.path +
+                                "?title=Categoría" +
+                                "&collection=" +
+                                item.title
+                              }
+                              className="block rounded-md px-2 py-2 text-sm hover:bg-blue-50"
+                              onClick={() => setOpen(false)}
+                            >
+                              {item.title}
+                            </Link>
+                            <ul className="ml-4 max-h-72 overflow-auto border-l border-blue-100 pl-2">
+                              {item.children!.map((item) => (
+                                <Link
+                                  key={item.title}
+                                  href={
+                                    item.path +
+                                    "?title=Subcategoría" +
+                                    "&collection=" +
+                                    item.title
+                                  }
+                                  className="block rounded-md px-2 py-2 text-sm hover:bg-blue-50"
+                                  onClick={() => setOpen(false)}
+                                >
+                                  {item.title}
+                                </Link>
+                              ))}
+                            </ul>
+                          </li>
+                        );
+                      }
+
+                      return (
+                        <li key={item.title}>
+                          <Link
+                            href={
+                              item.path +
+                              "?title=Categoría" +
+                              "&collection=" +
+                              item.title
+                            }
+                            className="block rounded-md px-2 py-2 text-sm hover:bg-blue-50"
+                            onClick={() => setOpen(false)}
+                          >
+                            {item.title}
+                          </Link>
+                        </li>
+                      );
+                    })}
                   </ul>
                 </div>
               </div>
