@@ -10,9 +10,10 @@ import CartModal from "../../cart/modal";
 import { getMenu } from "@/lib/shopify";
 import { Suspense } from "react";
 import { SearchProducts } from "./search-products";
+import { MAIN_MENU } from "@/lib/constants";
 
 export const Navbar = async () => {
-  const menuResponse = await getMenu("main-menu-copia");
+  const menuResponse = await getMenu(MAIN_MENU);
 
   const menu = [
     ...menuResponse,
@@ -130,7 +131,7 @@ const DropdownMenu = ({ name, drop }: DropdownMenuProps) => {
         </h2>
 
         <ul
-          className={`flex flex-wrap px-10 py-4 md:px-20 lg:px-40 ${hasSubmenus ? "gap-x-16 gap-y-4" : "gap-2"}`}
+          className={`grid sm:grid-cols-2 sm:px-10 md:grid-cols-3 md:px-20 lg:grid-cols-4 lg:px-40 xl:grid-cols-5 ${hasSubmenus ? "gap-4" : "gap-2"}`}
         >
           {drop.map((item) => (
             <li key={item.title} className="group/sub-group relative">
@@ -139,7 +140,7 @@ const DropdownMenu = ({ name, drop }: DropdownMenuProps) => {
                   href={
                     item.path + "?title=" + name + "&collection=" + item.title
                   }
-                  className="block w-full rounded-md px-5 py-2 hover:bg-blue-200"
+                  className={`uppercase hover:underline ${hasSubmenus ? "text-lg font-semibold" : ""}`}
                 >
                   {item.title}
                 </Link>

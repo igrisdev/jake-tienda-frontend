@@ -2,9 +2,10 @@ import Link from "next/link";
 
 import { ICategoryCart } from "@/types/category";
 import { getCollectionCategoriesAndBrands } from "@/lib/shopify";
+import { MAIN_MENU } from "@/lib/constants";
 
 export const Categories = async () => {
-  const { categories } = await getCollectionCategoriesAndBrands("main-menu");
+  const { categories } = await getCollectionCategoriesAndBrands(MAIN_MENU);
 
   if (categories.length < 1) return null;
 

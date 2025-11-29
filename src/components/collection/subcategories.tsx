@@ -1,10 +1,11 @@
+import { MAIN_MENU } from "@/lib/constants";
 import { getSubcategories } from "@/lib/shopify";
 import Link from "next/link";
 
 export default async function Subcategories({ title }: { title: string }) {
   if (title == null || title === "") return null;
 
-  const subcategories = await getSubcategories("main-menu", title);
+  const subcategories = await getSubcategories(MAIN_MENU, title);
 
   if (!subcategories || subcategories.children.length === 0) {
     return null;
@@ -14,7 +15,7 @@ export default async function Subcategories({ title }: { title: string }) {
 
   return (
     <section className="mb-8 w-full">
-      <h2 className="rounded-sm bg-linear-120 mb-4 from-blue-800 to-blue-500 py-2 pl-2 text-left text-2xl font-semibold text-white">
+      <h2 className="mb-4 rounded-sm bg-linear-120 from-blue-800 to-blue-500 py-2 pl-2 text-left text-2xl font-semibold text-white">
         Subcategorías
       </h2>
 
@@ -47,7 +48,7 @@ export default async function Subcategories({ title }: { title: string }) {
         ))}
       </ul>
 
-      <hr className="text-blue-400 mt-8" />
+      <hr className="mt-8 text-blue-400" />
     </section>
   );
 }
