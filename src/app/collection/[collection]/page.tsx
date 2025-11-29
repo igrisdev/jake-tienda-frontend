@@ -108,7 +108,7 @@ export default async function CategoryPage(props: {
       <ProductSearchProvider>
         <FiltersProvider>
           <div className="flex flex-col gap-8 text-black md:flex-row">
-            <div className="order-first hidden flex-none md:block md:w-max">
+            <div className="order-first hidden flex-none md:block md:w-max sticky top-32 h-fit">
               <FiltersSidebar />
             </div>
             <div className="order-last min-h-screen w-full md:order-0">

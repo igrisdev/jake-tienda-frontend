@@ -50,13 +50,13 @@ export default function SearchLayout({
   return (
     <FiltersProvider>
       <div className="mx-auto flex max-w-9xl flex-col gap-8 px-4 pt-6 pb-4 text-black md:flex-row">
-        <div className="order-first flex-none hidden md:block md:w-max">
+        <div className="order-first flex-none hidden md:block md:w-max sticky top-32 h-fit">
           <FiltersSidebar />
         </div>
         <div className="order-last min-h-screen w-full md:order-0">
           {children}
         </div>
-        <div className="order-0 flex-none md:order-last md:w-max">
+        <div className="order-0 flex-none md:order-last md:w-max sticky top-32 h-fit">
           <FilterList list={sorting} title="Ordenar por" />
         </div>
       </div>
