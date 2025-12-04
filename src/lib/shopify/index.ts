@@ -699,8 +699,8 @@ export async function getCollectionProducts({
     tags: [TAGS.collections, TAGS.products],
     variables: {
       handle: collection,
-      reverse,
-      sortKey: sortKey === "CREATED_AT" ? "CREATED" : sortKey,
+      reverse: false,
+      sortKey: sortKey === "CREATED_AT" ? "PRICE" : sortKey,
       first,
       last,
       after,
