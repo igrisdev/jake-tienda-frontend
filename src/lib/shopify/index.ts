@@ -59,6 +59,8 @@ import { getHeroItemsQuery } from "./queries/hero";
 import { getBestProductPosterQuery } from "./queries/best-product";
 import { ICategoryCart } from "@/types/category";
 import { getInitialFilterData } from "./queries/filters";
+import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath, revalidateTag } from "next/cache";
 
 const domain = SHOPIFY_STORE_DOMAIN
   ? ensureStartWith(SHOPIFY_STORE_DOMAIN, "https://")
@@ -556,6 +558,47 @@ export async function addToCart(
 //   return NextResponse.json({ status: 200, revalidated: true, now: Date.now() });
 // }
 
+export async function revalidate(req: NextRequest): Promise<NextResponse> {
+  const topic = req.headers.get("x-shopify-topic") || "unknown";
+  const secret = req.nextUrl.searchParams.get("secret");
+
+  const collectionWebhooks = [
+    "collections/create",
+    "collections/delete",
+    "collections/update",
+  ];
+  const productWebhooks = [
+    "products/create",
+    "products/delete",
+    "products/update",
+  ];
+
+  const isCollectionUpdate = collectionWebhooks.includes(topic);
+  const isProductUpdate = productWebhooks.includes(topic);
+
+  if (!secret || secret !== process.env.SHOPIFY_REVALIDATION_SECRET) {
+    console.error("Invalid revalidation secret.");
+    return NextResponse.json({ status: 200 });
+  }
+
+  if (!isCollectionUpdate && !isProductUpdate) {
+    return NextResponse.json({ status: 200 });
+  }
+
+  if (isCollectionUpdate) {
+    revalidateTag(TAGS.collections);
+    revalidatePath("/");
+    revalidatePath("/search");
+  }
+  if (isProductUpdate) {
+    revalidateTag(TAGS.products);
+    revalidatePath("/");
+    revalidatePath("/search");
+  }
+
+  return NextResponse.json({ status: 200, revalidated: true, now: Date.now() });
+}
+
 export async function getPage(handle: string): Promise<Page> {
   const res = await shopifyFetch<ShopifyPageOperation>({
     query: getPageQuery,
@@ -648,11 +691,11 @@ export async function getBestProductPoster() {
     id: node.id,
     product: product
       ? {
-        handle: product.handle,
-        title: product.title,
-        tags: product.tags,
-        image: product.featuredImage,
-      }
+          handle: product.handle,
+          title: product.title,
+          tags: product.tags,
+          image: product.featuredImage,
+        }
       : null,
   };
 }
