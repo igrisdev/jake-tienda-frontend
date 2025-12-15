@@ -8,8 +8,8 @@ const STORE = {
   address: "Calle 6 #10-09, Centro, Popayán, Cauca",
   lat: 2.44158,
   lng: -76.60996,
-  whatsapp: "573103876150",
-  phoneDisplay: "(+57) 310 387 6150",
+  whatsapp: "573226381632",
+  phoneDisplay: "(+57) 322 638 1632",
 };
 
 export default function AboutSection() {
@@ -19,7 +19,7 @@ export default function AboutSection() {
   const googleDirections = `https://www.google.com/maps/dir/?api=1&destination=${STORE.lat},${STORE.lng}`;
   const wazeDirections = `https://waze.com/ul?ll=${STORE.lat}%2C${STORE.lng}&navigate=yes`;
   const whatsappLink = `https://wa.me/${STORE.whatsapp}`;
-  const telLink = `tel:+573103876150`;
+  const telLink = `tel:+573226381632`;
 
   const handleCopy = async (text: string, type: "address") => {
     try {

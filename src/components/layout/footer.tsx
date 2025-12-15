@@ -87,7 +87,7 @@ export default function Footer() {
           <h3 className="text-lg font-semibold text-white">Contáctanos</h3>
           <div className="flex items-center justify-center space-x-2 md:justify-start">
             <Phone size={18} />
-            <span>+57 310 387 6150</span>
+            <span>+57 322 638 1632</span>
           </div>
           <div className="flex items-center justify-center space-x-2 text-xs md:justify-start">
             <Mail size={18} />
