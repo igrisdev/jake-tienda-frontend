@@ -1,6 +1,6 @@
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
-  siteUrl: "https://jake-tienda-frontend.vercel.app/", // Cámbialo cuando tengas tu dominio final
+  siteUrl: "https://www.jaketiendaelectronica.com/",
   generateRobotsTxt: true,
   changefreq: "weekly",
   priority: 0.7,
