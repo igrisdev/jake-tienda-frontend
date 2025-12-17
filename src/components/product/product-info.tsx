@@ -25,6 +25,10 @@ export const ProductInfo = ({ product }: { product: Product }) => {
   const [showBancoModal, setShowBancoModal] = useState(false);
   const [confirmDirect, setConfirmDirect] = useState(false);
   const [showBancoVideoModal, setShowBancoVideoModal] = useState(false);
+  const { availableForSale } = product;
+  const isSoldOut = !availableForSale;
+
+  const disabledButtonClasses = "cursor-not-allowed opacity-60";
 
   const baseAmount = useMemo(
     () => parseFloat(product.priceRange.maxVariantPrice.amount),
@@ -96,11 +100,12 @@ export const ProductInfo = ({ product }: { product: Product }) => {
           <span>(transferencia de Bancolombia, Nequi, Daviplata, etc)</span>
         </p>
         <button
-          onClick={() => setShowDirectModal(true)}
-          className="flex w-full items-center justify-center rounded-sm bg-green-600 p-3 text-center text-white transition hover:bg-green-700"
+          disabled={isSoldOut}
+          onClick={() => !isSoldOut && setShowDirectModal(true)}
+          className={`flex w-full items-center justify-center rounded-sm bg-green-600 p-3 text-center text-white transition ${isSoldOut ? disabledButtonClasses : "hover:bg-green-700"}`}
         >
           <MessageCircle size={20} className="mr-2" />
-          Más información
+          {isSoldOut ? "Agotado" : "Más información"}
         </button>
       </div>
 
@@ -115,11 +120,12 @@ export const ProductInfo = ({ product }: { product: Product }) => {
           Solicita tu crédito directamente con Banco de Bogotá
         </p>
         <button
-          onClick={() => setShowBancoModal(true)}
-          className="flex w-full items-center justify-center rounded-sm bg-blue-600 p-3 text-center text-white transition hover:bg-blue-700"
+          disabled={isSoldOut}
+          onClick={() => !isSoldOut && setShowBancoModal(true)}
+          className={`flex w-full items-center justify-center rounded-sm bg-blue-600 p-3 text-center text-white transition ${isSoldOut ? disabledButtonClasses : "hover:bg-blue-700"}`}
         >
           <Landmark size={20} className="mr-2" />
-          Solicitar crédito Banco de Bogotá
+          {isSoldOut ? "Agotado" : "Solicitar crédito Banco de Bogotá"}
         </button>
       </div>
 
@@ -134,10 +140,11 @@ export const ProductInfo = ({ product }: { product: Product }) => {
           Financia tu compra con Addi desde WhatsApp 
         </p>
         <button
-          onClick={() => setShowAddiModal(true)}
-          className="rounded-lg bg-yellow-400 px-4 py-2 font-semibold text-black hover:bg-yellow-500"
+          disabled={isSoldOut}
+          onClick={() => !isSoldOut && setShowAddiModal(true)}
+          className={`rounded-lg bg-yellow-400 px-4 py-2 font-semibold text-black ${isSoldOut ? disabledButtonClasses : "hover:bg-yellow-500"}`}
         >
-          Financiar con Addi
+          {isSoldOut ? "Agotado" : "Financiar con Addi"}
         </button>
       </div>
 
