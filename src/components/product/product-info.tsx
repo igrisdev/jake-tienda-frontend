@@ -25,6 +25,33 @@ export const ProductInfo = ({ product }: { product: Product }) => {
   const [showBancoModal, setShowBancoModal] = useState(false);
   const [confirmDirect, setConfirmDirect] = useState(false);
   const [showBancoVideoModal, setShowBancoVideoModal] = useState(false);
+
+  // New State for Bank Schedule
+  const [isBancoEnabled, setIsBancoEnabled] = useState(false);
+
+  useEffect(() => {
+    const checkTime = () => {
+      const now = new Date();
+      // Get hour in Colombia timezone
+      const formatter = new Intl.DateTimeFormat("en-US", {
+        timeZone: "America/Bogota",
+        hour: "numeric",
+        hour12: false,
+      });
+      const hour = parseInt(formatter.format(now), 10);
+
+      // Enable between 7 (7:00 AM) and 19 (7:59 PM). 
+      // User asked to disable AFTER 8 PM, so < 20 means up to 19:59.
+      // Logic: 7 <= hour < 20
+      const isOpen = hour >= 7 && hour < 20;
+      setIsBancoEnabled(isOpen);
+    };
+
+    checkTime(); // Initial check
+    const interval = setInterval(checkTime, 60000); // Check every minute
+    return () => clearInterval(interval);
+  }, []);
+
   const { availableForSale } = product;
   const isSoldOut = !availableForSale;
 
@@ -53,11 +80,11 @@ export const ProductInfo = ({ product }: { product: Product }) => {
     )}.`,
   )}`;
 
- const addiWhatsAppHref = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
-  `Hola, quiero financiar mi compra del producto "${product.title}" con Addi. El valor total del producto es de ${(
-    baseAmount * 1.07
-  ).toLocaleString("es-CO", { style: "currency", currency })}.`
-)}`;
+  const addiWhatsAppHref = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+    `Hola, quiero financiar mi compra del producto "${product.title}" con Addi. El valor total del producto es de ${(
+      baseAmount * 1.07
+    ).toLocaleString("es-CO", { style: "currency", currency })}.`
+  )}`;
 
 
 
@@ -120,12 +147,17 @@ export const ProductInfo = ({ product }: { product: Product }) => {
           Solicita tu crédito directamente con Banco de Bogotá
         </p>
         <button
-          disabled={isSoldOut}
-          onClick={() => !isSoldOut && setShowBancoModal(true)}
-          className={`flex w-full items-center justify-center rounded-sm bg-blue-600 p-3 text-center text-white transition ${isSoldOut ? disabledButtonClasses : "hover:bg-blue-700"}`}
+          disabled={isSoldOut || !isBancoEnabled}
+          onClick={() => !isSoldOut && isBancoEnabled && setShowBancoModal(true)}
+          className={`flex w-full items-center justify-center rounded-sm p-3 text-center text-white transition 
+            ${isSoldOut || !isBancoEnabled ? "cursor-not-allowed bg-gray-400 opacity-80" : "bg-blue-600 hover:bg-blue-700"}`}
         >
           <Landmark size={20} className="mr-2" />
-          {isSoldOut ? "Agotado" : "Solicitar crédito Banco de Bogotá"}
+          {isSoldOut
+            ? "Agotado"
+            : !isBancoEnabled
+              ? "Disponible de 7:00 AM a 8:00 PM"
+              : "Solicitar crédito Banco de Bogotá"}
         </button>
       </div>
 
@@ -137,7 +169,7 @@ export const ProductInfo = ({ product }: { product: Product }) => {
           currencyCode={currency}
         />
         <p className="text-sm text-gray-600">
-          Financia tu compra con Addi desde WhatsApp 
+          Financia tu compra con Addi desde WhatsApp
         </p>
         <button
           disabled={isSoldOut}
