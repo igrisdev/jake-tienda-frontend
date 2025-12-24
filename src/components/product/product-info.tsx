@@ -40,10 +40,8 @@ export const ProductInfo = ({ product }: { product: Product }) => {
       });
       const hour = parseInt(formatter.format(now), 10);
 
-      // Enable between 7 (7:00 AM) and 19 (7:59 PM). 
-      // User asked to disable AFTER 8 PM, so < 20 means up to 19:59.
-      // Logic: 7 <= hour < 20
-      const isOpen = hour >= 7 && hour < 20;
+      
+      const isOpen = hour >= 8 && hour < 20;
       setIsBancoEnabled(isOpen);
     };
 
@@ -156,7 +154,7 @@ export const ProductInfo = ({ product }: { product: Product }) => {
           {isSoldOut
             ? "Agotado"
             : !isBancoEnabled
-              ? "Disponible de 7:00 AM a 8:00 PM"
+              ? "Disponible de 8:00 AM a 8:00 PM"
               : "Solicitar crédito Banco de Bogotá"}
         </button>
       </div>
