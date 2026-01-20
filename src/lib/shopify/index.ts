@@ -61,6 +61,7 @@ import { ICategoryCart } from "@/types/category";
 import { getInitialFilterData } from "./queries/filters";
 import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath, revalidateTag } from "next/cache";
+import { getBannerJBLQuery } from "./queries/banner-jbl";
 
 const domain = SHOPIFY_STORE_DOMAIN
   ? ensureStartWith(SHOPIFY_STORE_DOMAIN, "https://")
@@ -619,6 +620,30 @@ export async function getHeroItems() {
       id: node.id,
       image: fields.image,
       handle: fields.product_selected?.handle,
+    };
+  });
+}
+
+export async function getBannerJBL() {
+  const res = await shopifyFetch({
+    query: getBannerJBLQuery,
+    tags: [TAGS.collections, TAGS.products],
+  });
+
+  const edges = res.body.data.metaobjects.edges;
+
+  if (!edges?.length) return [];
+
+  return edges.map(({ node }) => {
+    const fields = node.fields.reduce((acc, field) => {
+      acc[field.key] = field.reference ?? field.value;
+      return acc;
+    }, {});
+
+    return {
+      id: node.id,
+      image: fields.imagen,
+      handle: fields.producto?.handle,
     };
   });
 }
