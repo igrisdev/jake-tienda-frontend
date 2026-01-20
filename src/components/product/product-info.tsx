@@ -8,7 +8,7 @@ import { Product } from "@/lib/shopify/types";
 import Price from "../price";
 import { AddToCart } from "../cart/add-to-cart";
 
-const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WA_NUMBER || "573226381632";
+const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WA_NUMBER || "573103876150";
 const BANCO_BOGOTA_URL =
   process.env.NEXT_PUBLIC_BANCO_BOGOTA_URL ||
   "https://slm.bancodebogota.com/lwjqqbfe";
@@ -25,6 +25,35 @@ export const ProductInfo = ({ product }: { product: Product }) => {
   const [showBancoModal, setShowBancoModal] = useState(false);
   const [confirmDirect, setConfirmDirect] = useState(false);
   const [showBancoVideoModal, setShowBancoVideoModal] = useState(false);
+
+  // New State for Bank Schedule
+  const [isBancoEnabled, setIsBancoEnabled] = useState(false);
+
+  useEffect(() => {
+    const checkTime = () => {
+      const now = new Date();
+      // Get hour in Colombia timezone
+      const formatter = new Intl.DateTimeFormat("en-US", {
+        timeZone: "America/Bogota",
+        hour: "numeric",
+        hour12: false,
+      });
+      const hour = parseInt(formatter.format(now), 10);
+
+      
+      const isOpen = hour >= 8 && hour < 20;
+      setIsBancoEnabled(isOpen);
+    };
+
+    checkTime(); // Initial check
+    const interval = setInterval(checkTime, 60000); // Check every minute
+    return () => clearInterval(interval);
+  }, []);
+
+  const { availableForSale } = product;
+  const isSoldOut = !availableForSale;
+
+  const disabledButtonClasses = "cursor-not-allowed opacity-60";
 
   const baseAmount = useMemo(
     () => parseFloat(product.priceRange.maxVariantPrice.amount),
@@ -49,11 +78,11 @@ export const ProductInfo = ({ product }: { product: Product }) => {
     )}.`,
   )}`;
 
- const addiWhatsAppHref = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
-  `Hola, quiero financiar mi compra del producto "${product.title}" con Addi. El valor total del producto es de ${(
-    baseAmount * 1.07
-  ).toLocaleString("es-CO", { style: "currency", currency })}.`
-)}`;
+  const addiWhatsAppHref = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+    `Hola, quiero financiar mi compra del producto "${product.title}" con Addi. El valor total del producto es de ${(
+      baseAmount * 1.07
+    ).toLocaleString("es-CO", { style: "currency", currency })}.`
+  )}`;
 
 
 
@@ -96,11 +125,12 @@ export const ProductInfo = ({ product }: { product: Product }) => {
           <span>(transferencia de Bancolombia, Nequi, Daviplata, etc)</span>
         </p>
         <button
-          onClick={() => setShowDirectModal(true)}
-          className="flex w-full items-center justify-center rounded-sm bg-green-600 p-3 text-center text-white transition hover:bg-green-700"
+          disabled={isSoldOut}
+          onClick={() => !isSoldOut && setShowDirectModal(true)}
+          className={`flex w-full items-center justify-center rounded-sm bg-green-600 p-3 text-center text-white transition ${isSoldOut ? disabledButtonClasses : "hover:bg-green-700"}`}
         >
           <MessageCircle size={20} className="mr-2" />
-          Más información
+          {isSoldOut ? "Agotado" : "Más información"}
         </button>
       </div>
 
@@ -115,11 +145,17 @@ export const ProductInfo = ({ product }: { product: Product }) => {
           Solicita tu crédito directamente con Banco de Bogotá
         </p>
         <button
-          onClick={() => setShowBancoModal(true)}
-          className="flex w-full items-center justify-center rounded-sm bg-blue-600 p-3 text-center text-white transition hover:bg-blue-700"
+          disabled={isSoldOut || !isBancoEnabled}
+          onClick={() => !isSoldOut && isBancoEnabled && setShowBancoModal(true)}
+          className={`flex w-full items-center justify-center rounded-sm p-3 text-center text-white transition 
+            ${isSoldOut || !isBancoEnabled ? "cursor-not-allowed bg-gray-400 opacity-80" : "bg-blue-600 hover:bg-blue-700"}`}
         >
           <Landmark size={20} className="mr-2" />
-          Solicitar crédito Banco de Bogotá
+          {isSoldOut
+            ? "Agotado"
+            : !isBancoEnabled
+              ? "Disponible de 8:00 AM a 8:00 PM"
+              : "Solicitar crédito Banco de Bogotá"}
         </button>
       </div>
 
@@ -131,13 +167,14 @@ export const ProductInfo = ({ product }: { product: Product }) => {
           currencyCode={currency}
         />
         <p className="text-sm text-gray-600">
-          Financia tu compra con Addi desde WhatsApp 
+          Financia tu compra con Addi desde WhatsApp
         </p>
         <button
-          onClick={() => setShowAddiModal(true)}
-          className="rounded-lg bg-yellow-400 px-4 py-2 font-semibold text-black hover:bg-yellow-500"
+          disabled={isSoldOut}
+          onClick={() => !isSoldOut && setShowAddiModal(true)}
+          className={`rounded-lg bg-yellow-400 px-4 py-2 font-semibold text-black ${isSoldOut ? disabledButtonClasses : "hover:bg-yellow-500"}`}
         >
-          Financiar con Addi
+          {isSoldOut ? "Agotado" : "Financiar con Addi"}
         </button>
       </div>
 

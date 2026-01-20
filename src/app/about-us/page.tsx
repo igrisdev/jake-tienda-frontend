@@ -6,7 +6,7 @@ const STORE = {
   lat: 2.44158,
   lng: -76.60996,
   url: "https://jaketiendaelectronica.com/about-us",
-  telephone: "+57 322 638 1632",
+  telephone: "+57 310 387 6150",
 };
 
 function jsonLdLocalBusiness() {
