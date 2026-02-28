@@ -50,7 +50,7 @@ export default function SearchLayout({
 }) {
   return (
     <FiltersProvider>
-      <div className="max-w-9xl mx-auto flex flex-col gap-8 pt-6 pb-4 text-black md:flex-row">
+      <div className="max-w-9xl mx-auto flex flex-col gap-8 pt-6 pb-4 text-black md:flex-row md:px-4">
         <div className="sticky top-32 order-first hidden h-fit flex-none md:block md:w-max">
           <FiltersSidebar />
         </div>

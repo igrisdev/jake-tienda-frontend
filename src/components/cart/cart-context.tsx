@@ -1,4 +1,5 @@
 "use client";
+import { INTERNATIONALCODE } from "@/lib/constants";
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Cart, CartItem, Product, ProductVariant } from "@/lib/shopify/types";
 import { createContext, use, useContext, useMemo, useOptimistic } from "react";
@@ -30,9 +31,9 @@ function createEmptyCart(): Cart {
     totalQuantity: 0,
     lines: [],
     cost: {
-      subtotalAmount: { amount: "0", currencyCode: "USD" },
-      totalAmount: { amount: "0", currencyCode: "USD" },
-      totalTaxAmount: { amount: "0", currencyCode: "USD" },
+      subtotalAmount: { amount: "0", currencyCode: INTERNATIONALCODE },
+      totalAmount: { amount: "0", currencyCode: INTERNATIONALCODE },
+      totalTaxAmount: { amount: "0", currencyCode: INTERNATIONALCODE },
     },
   };
 }
@@ -80,7 +81,7 @@ function updateCartTotals(
     0,
   );
 
-  const currencyCode = lines[0]?.cost.totalAmount.currencyCode ?? "USD";
+  const currencyCode = lines[0]?.cost.totalAmount.currencyCode ?? INTERNATIONALCODE;
 
   return {
     totalQuantity,
