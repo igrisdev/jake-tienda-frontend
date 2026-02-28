@@ -6,6 +6,7 @@ import {
   SHOPIFY_STOREFRONT_ACCESS_TOKEN,
   HIDDEN_PRODUCT_TAG,
   TAGS,
+  INTERNATIONALCODE,
 } from "@/lib/constants";
 import { isShopifyError } from "../type-guards";
 import { defaultFilters, ensureStartWith, extractFilters } from "../utils";
@@ -429,7 +430,7 @@ function reshapeCart(cart: ShopifyCart): Cart {
   if (!cart.cost?.totalTaxAmount) {
     cart.cost.totalTaxAmount = {
       amount: "0.0",
-      currencyCode: "USD",
+      currencyCode: INTERNATIONALCODE,
     };
   }
 
