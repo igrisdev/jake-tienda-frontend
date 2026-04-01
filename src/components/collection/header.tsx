@@ -54,7 +54,6 @@ export const HeaderByJBL = ({ items }: HeaderByJBLProps) => {
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
   const [progress, setProgress] = useState(0);
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
@@ -80,14 +79,7 @@ export const HeaderByJBL = ({ items }: HeaderByJBLProps) => {
   };
 
   useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
-
-  useEffect(() => {
-    if (slides.length <= 1 || isMobile || isHovered) return;
+    if (slides.length <= 1 || isHovered) return;
     const tickRate = 50;
     const totalTime = 5000;
     const increment = (tickRate / totalTime) * 100;
@@ -95,7 +87,7 @@ export const HeaderByJBL = ({ items }: HeaderByJBLProps) => {
       setProgress((prev) => (prev >= 100 ? 100 : prev + increment));
     }, tickRate);
     return () => clearInterval(timer);
-  }, [slides.length, isHovered, isMobile]);
+  }, [slides.length, isHovered]);
 
   useEffect(() => {
     if (progress >= 100) nextSlide();
@@ -231,7 +223,7 @@ export const HeaderByJBL = ({ items }: HeaderByJBLProps) => {
                 <span
                   className="absolute top-0 left-0 h-full rounded-full bg-gray-800"
                   style={{
-                    width: isMobile ? "100%" : `${progress}%`,
+                    width: `${progress}%`,
                     transition: "width 50ms linear",
                   }}
                 />
